@@ -222,9 +222,9 @@ class block_customhub_search_form extends moodleform {
 
             $options = array();
             $options['all'] = get_string('any');
-            $options[HUB_AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
-            $options[HUB_AUDIENCE_STUDENTS] = get_string('audiencestudents', 'hub');
-            $options[HUB_AUDIENCE_ADMINS] = get_string('audienceadmins', 'hub');
+            $options[HUB_AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'tool_customhub');
+            $options[HUB_AUDIENCE_STUDENTS] = get_string('audiencestudents', 'tool_customhub');
+            $options[HUB_AUDIENCE_ADMINS] = get_string('audienceadmins', 'tool_customhub');
             $mform->addElement('select', 'audience', get_string('audience', 'block_customhub'), $options);
             $mform->setDefault('audience', $audience);
             unset($options);
@@ -232,13 +232,13 @@ class block_customhub_search_form extends moodleform {
 
             $options = array();
             $options['all'] = get_string('any');
-            $options[HUB_EDULEVEL_PRIMARY] = get_string('edulevelprimary', 'hub');
-            $options[HUB_EDULEVEL_SECONDARY] = get_string('edulevelsecondary', 'hub');
-            $options[HUB_EDULEVEL_TERTIARY] = get_string('eduleveltertiary', 'hub');
-            $options[HUB_EDULEVEL_GOVERNMENT] = get_string('edulevelgovernment', 'hub');
-            $options[HUB_EDULEVEL_ASSOCIATION] = get_string('edulevelassociation', 'hub');
-            $options[HUB_EDULEVEL_CORPORATE] = get_string('edulevelcorporate', 'hub');
-            $options[HUB_EDULEVEL_OTHER] = get_string('edulevelother', 'hub');
+            $options[HUB_EDULEVEL_PRIMARY] = get_string('edulevelprimary', 'tool_customhub');
+            $options[HUB_EDULEVEL_SECONDARY] = get_string('edulevelsecondary', 'tool_customhub');
+            $options[HUB_EDULEVEL_TERTIARY] = get_string('eduleveltertiary', 'tool_customhub');
+            $options[HUB_EDULEVEL_GOVERNMENT] = get_string('edulevelgovernment', 'tool_customhub');
+            $options[HUB_EDULEVEL_ASSOCIATION] = get_string('edulevelassociation', 'tool_customhub');
+            $options[HUB_EDULEVEL_CORPORATE] = get_string('edulevelcorporate', 'tool_customhub');
+            $options[HUB_EDULEVEL_OTHER] = get_string('edulevelother', 'tool_customhub');
             $mform->addElement('select', 'educationallevel',
                     get_string('educationallevel', 'block_customhub'), $options);
             $mform->setDefault('educationallevel', $educationallevel);
@@ -307,7 +307,7 @@ class block_customhub_search_form extends moodleform {
         $errors = array();
 
         if (empty($this->_form->_submitValues['huburl'])) {
-            $errors['huburl'] = get_string('nohubselected', 'hub');
+            $errors['huburl'] = get_string('nohubselected', 'block_customhub');
         }
 
         return $errors;

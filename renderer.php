@@ -50,7 +50,7 @@ class block_customhub_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function remove_success(moodle_url $url) {
-        $html = $this->output->notification(get_string('communityremoved', 'hub'),
+        $html = $this->output->notification(get_string('communityremoved', 'block_customhub'),
                     'notifysuccess');
         $continuebutton = new single_button($url,
                         get_string('continue', 'block_customhub'));
@@ -155,8 +155,8 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //create course content related information html
                 $course->subject = (get_string_manager()->string_exists($course->subject, 'edufields')) ?
                         get_string($course->subject, 'edufields') : get_string('none');
-                $course->audience = get_string('audience' . $course->audience, 'hub');
-                $course->educationallevel = get_string('edulevel' . $course->educationallevel, 'hub');
+                $course->audience = get_string('audience' . $course->audience, 'tool_customhub');
+                $course->educationallevel = get_string('edulevel' . $course->educationallevel, 'tool_customhub');
                 $coursecontentinfo = '';
                 if (empty($course->coverage)) {
                     $course->coverage = '';

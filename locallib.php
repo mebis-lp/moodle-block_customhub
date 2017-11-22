@@ -100,7 +100,7 @@ class block_customhub_manager {
 
         //send an identification token if the site is registered on the hub
         $registrationmanager = new tool_customhub\registration_manager();
-        $registeredhub = $registrationmanager->get_registeredhub($course->huburl);
+        $registeredhub = $registrationmanager->get_registeredhub($course->huburl, true);
         if (!empty($registeredhub)) {
             $token = $registeredhub->token;
             $curlurl .= '&token='.$token;

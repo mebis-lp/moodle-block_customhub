@@ -113,3 +113,7 @@ $string['subject_help'] = 'To narrow your search to courses about a particular s
 $string['userinfo'] = 'Creator: {$a->creatorname} - Publisher: {$a->publishername}';
 $string['visitdemo'] = 'Visit demo';
 $string['visitsite'] = 'Visit site';
+$string['cannotsearchcommunity'] = 'Sorry, you don\'t have the right permissions to see this page';
+$string['xmlrpcdisabledcommunity'] = 'The XML-RPC extension is not enabled on the server. You can not search and download courses.';
+$string['nohubselected'] = 'No hub selected';
+$string['communityremoved'] = 'That course link has been removed from your list';
