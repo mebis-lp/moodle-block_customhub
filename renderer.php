@@ -21,26 +21,26 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * Block community renderer.
- * @package   block_community
+ * Block customhub renderer.
+ * @package   block_customhub
  * @copyright 2010 Moodle Pty Ltd (http://moodle.com)
  * @author    Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_community_renderer extends plugin_renderer_base {
+class block_customhub_renderer extends plugin_renderer_base {
 
     public function restore_confirmation_box($filename, $context) {
         $restoreurl = new moodle_url('/backup/restore.php',
                         array('filename' => $filename . ".mbz", 'contextid' => $context->id));
-        $searchurl = new moodle_url('/blocks/community/communitycourse.php',
+        $searchurl = new moodle_url('/blocks/customhub/communitycourse.php',
                         array('add' => 1, 'courseid' => $context->instanceid,
                             'cancelrestore' => 1, 'sesskey' => sesskey(),
                             'filename' => $filename));
         $formrestore = new single_button($restoreurl,
-                        get_string('dorestore', 'block_community'));
+                        get_string('dorestore', 'block_customhub'));
         $formsearch = new single_button($searchurl,
-                        get_string('donotrestore', 'block_community'));
-        return $this->output->confirm(get_string('restorecourseinfo', 'block_community'),
+                        get_string('donotrestore', 'block_customhub'));
+        return $this->output->confirm(get_string('restorecourseinfo', 'block_customhub'),
                 $formrestore, $formsearch);
     }
 
@@ -53,7 +53,7 @@ class block_community_renderer extends plugin_renderer_base {
         $html = $this->output->notification(get_string('communityremoved', 'hub'),
                     'notifysuccess');
         $continuebutton = new single_button($url,
-                        get_string('continue', 'block_community'));
+                        get_string('continue', 'block_customhub'));
         $html .= html_writer::tag('div', $this->output->render($continuebutton),
                 array('class' => 'continuebutton'));
         return $html;
@@ -65,10 +65,10 @@ class block_community_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function save_link_success(moodle_url $url) {
-        $html = $this->output->notification(get_string('addedtoblock', 'block_community'),
+        $html = $this->output->notification(get_string('addedtoblock', 'block_customhub'),
                     'notifysuccess');
         $continuebutton = new single_button($url,
-                        get_string('continue', 'block_community'));
+                        get_string('continue', 'block_customhub'));
         $html .= html_writer::tag('div', $this->output->render($continuebutton),
                 array('class' => 'continuebutton'));
         return $html;
@@ -80,7 +80,7 @@ class block_community_renderer extends plugin_renderer_base {
      * @return string html code
      */
     public function next_button($data) {
-        $nextlink = html_writer::tag('a', get_string('next', 'block_community'),
+        $nextlink = html_writer::tag('a', get_string('next', 'block_customhub'),
                 array('href' => new moodle_url('', $data)));
         return html_writer::tag('div', $nextlink, array( 'class' => 'nextlink'));
     }
@@ -99,7 +99,7 @@ class block_community_renderer extends plugin_renderer_base {
 
         if (empty($courses)) {
             if (isset($courses)) {
-                $renderedhtml .= get_string('nocourse', 'block_community');
+                $renderedhtml .= get_string('nocourse', 'block_customhub');
             }
         } else {
             $courseiteration = 0;
@@ -110,10 +110,10 @@ class block_community_renderer extends plugin_renderer_base {
                 //create visit link html
                 if (!empty($course->courseurl)) {
                     $courseurl = new moodle_url($course->courseurl);
-                    $linktext = get_string('visitsite', 'block_community');
+                    $linktext = get_string('visitsite', 'block_customhub');
                 } else {
                     $courseurl = new moodle_url($course->demourl);
-                    $linktext = get_string('visitdemo', 'block_community');
+                    $linktext = get_string('visitdemo', 'block_customhub');
                 }
 
                 $visitlinkhtml = html_writer::tag('a', $linktext,
@@ -144,9 +144,9 @@ class block_community_renderer extends plugin_renderer_base {
                                 array('class' => 'hubcoursedescription'));
 
                 //create users related information html
-                $courseuserinfo = get_string('userinfo', 'block_community', $course);
+                $courseuserinfo = get_string('userinfo', 'block_customhub', $course);
                 if ($course->contributornames) {
-                    $courseuserinfo .= ' - ' . get_string('contributors', 'block_community',
+                    $courseuserinfo .= ' - ' . get_string('contributors', 'block_customhub',
                                     $course->contributornames);
                 }
                 $courseuserinfohtml = html_writer::tag('div', $courseuserinfo,
@@ -161,10 +161,10 @@ class block_community_renderer extends plugin_renderer_base {
                 if (empty($course->coverage)) {
                     $course->coverage = '';
                 } else {
-                    $coursecontentinfo .= get_string('coverage', 'block_community', $course->coverage);
+                    $coursecontentinfo .= get_string('coverage', 'block_customhub', $course->coverage);
                     $coursecontentinfo .= ' - ';
                 }
-                $coursecontentinfo .= get_string('contentinfo', 'block_community', $course);
+                $coursecontentinfo .= get_string('contentinfo', 'block_customhub', $course);
                 $coursecontentinfohtml = html_writer::tag('div', $coursecontentinfo,
                                 array('class' => 'hubcoursecontentinfo'));
 
@@ -186,7 +186,7 @@ class block_community_renderer extends plugin_renderer_base {
                     }
                 }
                 $course->timeupdated = userdate($course->timemodified);
-                $coursefileinfo = get_string('fileinfo', 'block_community', $course);
+                $coursefileinfo = get_string('fileinfo', 'block_customhub', $course);
                 $coursefileinfohtml = html_writer::tag('div', $coursefileinfo,
                                 array('class' => 'hubcoursefileinfo'));
 
@@ -224,11 +224,11 @@ class block_community_renderer extends plugin_renderer_base {
                     }
 
                     $blocksandactivities = html_writer::tag('div',
-                                    get_string('activities', 'block_community') . " : " . $activitieshtml);
+                                    get_string('activities', 'block_customhub') . " : " . $activitieshtml);
 
                     //Uncomment following lines to display blocks information
 //                    $blocksandactivities .= html_writer::tag('span',
-//                                    get_string('blocks', 'block_community') . " : " . $blockhtml);
+//                                    get_string('blocks', 'block_customhub') . " : " . $blockhtml);
                 }
 
                 //Create outcomes html
@@ -240,7 +240,7 @@ class block_community_renderer extends plugin_renderer_base {
                         }
                         $outcomes .= $outcome['fullname'];
                     }
-                    $outcomes = get_string('outcomes', 'block_community',
+                    $outcomes = get_string('outcomes', 'block_customhub',
                             $outcomes);
                 }
                 $outcomeshtml = html_writer::tag('div', $outcomes, array('class' => 'hubcourseoutcomes'));
@@ -258,9 +258,9 @@ class block_community_renderer extends plugin_renderer_base {
                         'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
                         'coursedescription' => $course->description,
                         'courseid' => $contextcourseid);
-                    $addurl = new moodle_url("/blocks/community/communitycourse.php", $params);
+                    $addurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
                     $addbuttonhtml = html_writer::tag('a',
-                                    get_string('addtocommunityblock', 'block_community'),
+                                    get_string('addtocommunityblock', 'block_customhub'),
                                     array('href' => $addurl, 'class' => 'centeredbutton, hubcoursedownload'));
                 }
 
@@ -271,13 +271,13 @@ class block_community_renderer extends plugin_renderer_base {
                         'remotemoodleurl' => $CFG->wwwroot, 'courseid' => $contextcourseid,
                         'downloadcourseid' => $course->id, 'huburl' => $huburl,
                         'coursefullname' => $course->fullname, 'backupsize' => $course->backupsize);
-                    $downloadurl = new moodle_url("/blocks/community/communitycourse.php", $params);
-                    $downloadbuttonhtml = html_writer::tag('a', get_string('install', 'block_community'),
+                    $downloadurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
+                    $downloadbuttonhtml = html_writer::tag('a', get_string('install', 'block_customhub'),
                                     array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));
                 }
 
                 //Create rating html
-                $rating = html_writer::tag('div', get_string('noratings', 'block_community'),
+                $rating = html_writer::tag('div', get_string('noratings', 'block_customhub'),
                                 array('class' => 'norating'));
                 if (!empty($course->rating)) {
                     $course->rating = (object) $course->rating;
@@ -301,14 +301,14 @@ class block_community_renderer extends plugin_renderer_base {
 
 
                 //Create comments html
-                $coursecomments = html_writer::tag('div', get_string('nocomments', 'block_community'),
+                $coursecomments = html_writer::tag('div', get_string('nocomments', 'block_customhub'),
                                 array('class' => 'nocomments'));
                 $commentcount = 0;
                 if (!empty($course->comments)) {
                     //display only if there is some comment if there is some comment
                     $commentcount = count($course->comments);
                     $coursecomments = html_writer::tag('div',
-                                    get_string('comments', 'block_community', $commentcount),
+                                    get_string('comments', 'block_customhub', $commentcount),
                                     array('class' => 'commenttitle'));
 
                     foreach ($course->comments as $comment) {
@@ -328,7 +328,7 @@ class block_community_renderer extends plugin_renderer_base {
                                         array('class' => 'hubcomment'));
                     }
                     $coursecommenticon = html_writer::tag('div',
-                                    get_string('comments', 'block_community', $commentcount),
+                                    get_string('comments', 'block_customhub', $commentcount),
                                     array('class' => 'hubcoursecomments',
                                         'id' => 'comments-' . $course->id));
                     $coursecomments = $coursecommenticon . html_writer::tag('div',
@@ -339,7 +339,7 @@ class block_community_renderer extends plugin_renderer_base {
 
                 //link rate and comment
                 $rateandcomment = html_writer::tag('div',
-                                html_writer::tag('a', get_string('rateandcomment', 'block_community'),
+                                html_writer::tag('a', get_string('rateandcomment', 'block_customhub'),
                                         array('href' => new moodle_url($huburl,
                                                     array('courseid' => $course->id, 'mustbelogged' => true)),
                                             'onclick' => 'this.target="_blank"')),

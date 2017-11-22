@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_community', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'block_customhub', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   block_community
+ * @package   block_customhub
  * @author    Jerome Mouneyrac <jerome@mouneyrac.com>
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,8 +36,8 @@ $string['audience_help'] = 'What kind of course are you looking for?  As well as
 $string['blocks'] = 'Blocks';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['comments'] = 'Comments ({$a})';
-$string['community:addinstance'] = 'Add a new community finder block';
-$string['community:myaddinstance'] = 'Add a new community finder block to Dashboard';
+$string['customhub:addinstance'] = 'Add a new hub search block';
+$string['customhub:myaddinstance'] = 'Add a new hub search block to Dashboard';
 $string['contentinfo'] = 'Subject: {$a->subject} - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
 $string['continue'] = 'Continue';
 $string['contributors'] = ' - Contributors: {$a}';
@@ -94,7 +94,7 @@ $string['orderbyname'] = 'Name';
 $string['orderbypublisher'] = 'Publisher';
 $string['orderbyratingaverage'] = 'Rating';
 $string['outcomes'] = 'Outcomes: {$a}';
-$string['pluginname'] = 'Community finder';
+$string['pluginname'] = 'Hub search';
 $string['rateandcomment'] = 'Rate and comment';
 $string['rating'] = 'Rating';
 $string['removecommunitycourse'] = 'Remove community course';

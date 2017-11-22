@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package block_community
+ * @package block_customhub
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
- * The community block
+ * The custom hub search block
  */
 
-class block_community extends block_list {
+class block_customhub extends block_list {
 
     function init() {
-        $this->title = get_string('pluginname', 'block_community');
+        $this->title = get_string('pluginname', 'block_customhub');
     }
 
     function user_can_addto($page) {
@@ -67,24 +67,24 @@ class block_community extends block_list {
         }
 
         $icon = $OUTPUT->pix_icon('i/group', get_string('group'));
-        $addcourseurl = new moodle_url('/blocks/community/communitycourse.php',
+        $addcourseurl = new moodle_url('/blocks/customhub/communitycourse.php',
                         array('add' => true, 'courseid' => $this->page->course->id));
-        $searchlink = html_writer::tag('a', $icon . get_string('addcourse', 'block_community'),
+        $searchlink = html_writer::tag('a', $icon . get_string('addcourse', 'block_customhub'),
                         array('href' => $addcourseurl->out(false)));
         $this->content->items[] = $searchlink;
 
-        require_once($CFG->dirroot . '/blocks/community/locallib.php');
-        $communitymanager = new block_community_manager();
-        $courses = $communitymanager->block_community_get_courses($USER->id);
+        require_once($CFG->dirroot . '/blocks/customhub/locallib.php');
+        $customhubmanager = new block_customhub_manager();
+        $courses = $customhubmanager->block_customhub_get_courses($USER->id);
         if ($courses) {
             $this->content->items[] = html_writer::empty_tag('hr');
             $this->content->icons[] = '';
-            $this->content->items[] = get_string('mycommunities', 'block_community');
+            $this->content->items[] = get_string('mycommunities', 'block_customhub');
             $this->content->icons[] = '';
             foreach ($courses as $course) {
                 //delete link
-                $deleteicon = $OUTPUT->pix_icon('t/delete', get_string('removecommunitycourse', 'block_community'));
-                $deleteurl = new moodle_url('/blocks/community/communitycourse.php',
+                $deleteicon = $OUTPUT->pix_icon('t/delete', get_string('removecommunitycourse', 'block_customhub'));
+                $deleteurl = new moodle_url('/blocks/customhub/communitycourse.php',
                                 array('remove' => true,
                                     'courseid' => $this->page->course->id,
                                     'communityid' => $course->id, 'sesskey' => sesskey()));

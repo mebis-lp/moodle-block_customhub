@@ -17,7 +17,7 @@
 /**
  * Community library
  *
- * @package    block_community
+ * @package    block_customhub
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
@@ -25,7 +25,7 @@
  *
  */
 
-class block_community_manager {
+class block_customhub_manager {
 
     /**
      * Add a community course
@@ -33,10 +33,10 @@ class block_community_manager {
      * @param integer $userid
      * @return id of course or false if already added
      */
-    public function block_community_add_course($course, $userid) {
+    public function block_customhub_add_course($course, $userid) {
         global $DB;
 
-        $community = $this->block_community_get_course($course->url, $userid);
+        $community = $this->block_customhub_get_course($course->url, $userid);
 
         if (empty($community)) {
             $community = new stdClass();
@@ -45,7 +45,7 @@ class block_community_manager {
             $community->coursedescription = $course->description;
             $community->courseurl = $course->url;
             $community->imageurl = $course->imageurl;
-            return $DB->insert_record('block_community', $community);
+            return $DB->insert_record('block_customhub', $community);
         } else {
             return false;
         }
@@ -56,9 +56,9 @@ class block_community_manager {
      * @param integer $userid
      * @return array of course
      */
-    public function block_community_get_courses($userid) {
+    public function block_customhub_get_courses($userid) {
         global $DB;
-        return $DB->get_records('block_community', array('userid' => $userid), 'coursename');
+        return $DB->get_records('block_customhub', array('userid' => $userid), 'coursename');
     }
 
     /**
@@ -67,9 +67,9 @@ class block_community_manager {
      * @param integer $userid
      * @return array of course
      */
-    public function block_community_get_course($courseurl, $userid) {
+    public function block_customhub_get_course($courseurl, $userid) {
         global $DB;
-        return $DB->get_record('block_community',
+        return $DB->get_record('block_customhub',
                 array('courseurl' => $courseurl, 'userid' => $userid));
     }
 
@@ -80,7 +80,7 @@ class block_community_manager {
      * @return array 'privatefile' the file name saved in private area
      *               'tmpfile' the file name saved in the moodledata temp dir (for restore)
      */
-    public function block_community_download_course_backup($course) {
+    public function block_customhub_download_course_backup($course) {
         global $CFG, $USER;
         require_once($CFG->libdir . "/filelib.php");
         require_once($CFG->dirroot. "/course/publish/lib.php");
@@ -99,8 +99,7 @@ class block_community_manager {
                 .HUB_BACKUP_FILE_TYPE.'&courseid='.$course->id;
 
         //send an identification token if the site is registered on the hub
-        require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
-        $registrationmanager = new registration_manager();
+        $registrationmanager = new tool_customhub\registration_manager();
         $registeredhub = $registrationmanager->get_registeredhub($course->huburl);
         if (!empty($registeredhub)) {
             $token = $registeredhub->token;
@@ -139,9 +138,9 @@ class block_community_manager {
      * @param integer $userid
      * @return bool true
      */
-    public function block_community_remove_course($communityid, $userid) {
+    public function block_customhub_remove_course($communityid, $userid) {
         global $DB, $USER;
-        return $DB->delete_records('block_community',
+        return $DB->delete_records('block_customhub',
                 array('userid' => $userid, 'id' => $communityid));
     }
 

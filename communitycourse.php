@@ -22,16 +22,15 @@
  * It also handles adding a course to the community block.
  * It also handles downloading a course template.
  *
- * @package    block_community
+ * @package    block_customhub
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  */
 
 require('../../config.php');
-require_once($CFG->dirroot . '/blocks/community/locallib.php');
-require_once($CFG->dirroot . '/blocks/community/forms.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
+require_once($CFG->dirroot . '/blocks/customhub/locallib.php');
+require_once($CFG->dirroot . '/blocks/customhub/forms.php');
 
 require_login();
 $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
@@ -39,11 +38,11 @@ $parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EX
 
 $context = context_course::instance($courseid);
 $PAGE->set_course($parentcourse);
-$PAGE->set_url('/blocks/community/communitycourse.php');
+$PAGE->set_url('/blocks/customhub/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('searchcourse', 'block_community'));
-$PAGE->navbar->add(get_string('searchcourse', 'block_community'));
+$PAGE->set_title(get_string('searchcourse', 'block_customhub'));
+$PAGE->navbar->add(get_string('searchcourse', 'block_customhub'));
 
 $search = optional_param('search', null, PARAM_TEXT);
 
@@ -58,14 +57,14 @@ if (empty($usercansearch)) {
 }
 if (!empty($notificationerror)) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
+    echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_customhub'), 3, 'main');
     echo $OUTPUT->notification($notificationerror);
     echo $OUTPUT->footer();
     die();
 }
 
-$communitymanager = new block_community_manager();
-$renderer = $PAGE->get_renderer('block_community');
+$customhubmanager = new block_customhub_manager();
+$renderer = $PAGE->get_renderer('block_customhub');
 
 /// Check if the page has been called with trust argument
 $add = optional_param('add', -1, PARAM_INT);
@@ -76,7 +75,7 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
     $course->description = optional_param('coursedescription', '', PARAM_TEXT);
     $course->url = optional_param('courseurl', '', PARAM_URL);
     $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
-    $communitymanager->block_community_add_course($course, $USER->id);
+    $customhubmanager->block_customhub_add_course($course, $USER->id);
     echo $OUTPUT->header();
     echo $renderer->save_link_success(
             new moodle_url('/course/view.php', array('id' => $courseid)));
@@ -106,19 +105,19 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
 
     //OUTPUT: display restore choice page
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('downloadingcourse', 'block_community'), 3, 'main');
+    echo $OUTPUT->heading(get_string('downloadingcourse', 'block_customhub'), 3, 'main');
     $sizeinfo = new stdClass();
     $sizeinfo->total = number_format($backupsize / 1000000, 2);
-    echo html_writer::tag('div', get_string('downloadingsize', 'block_community', $sizeinfo),
+    echo html_writer::tag('div', get_string('downloadingsize', 'block_customhub', $sizeinfo),
             array('class' => 'textinfo'));
     if (ob_get_level()) {
         ob_flush();
     }
     flush();
-    $filenames = $communitymanager->block_community_download_course_backup($course);
-    echo html_writer::tag('div', get_string('downloaded', 'block_community'),
+    $filenames = $customhubmanager->block_customhub_download_course_backup($course);
+    echo html_writer::tag('div', get_string('downloaded', 'block_customhub'),
             array('class' => 'textinfo'));
-    echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_community',
+    echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_customhub',
                     '/downloaded_backup/' . $filenames['privatefile']), 'notifysuccess');
     echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);
     echo $OUTPUT->footer();
@@ -129,7 +128,7 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
 $remove = optional_param('remove', '', PARAM_INT);
 $communityid = optional_param('communityid', '', PARAM_INT);
 if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
-    $communitymanager->block_community_remove_course($communityid, $USER->id);
+    $customhubmanager->block_customhub_remove_course($communityid, $USER->id);
     echo $OUTPUT->header();
     echo $renderer->remove_success(new moodle_url('/course/view.php', array('id' => $courseid)));
     echo $OUTPUT->footer();
@@ -148,7 +147,7 @@ $fromformdata['orderby'] = optional_param('orderby', 'newest', PARAM_ALPHA);
 $fromformdata['huburl'] = optional_param('huburl', HUB_MOODLEORGHUBURL, PARAM_URL);
 $fromformdata['search'] = $search;
 $fromformdata['courseid'] = $courseid;
-$hubselectorform = new community_hub_search_form('', $fromformdata);
+$hubselectorform = new block_customhub_search_form('', $fromformdata);
 $hubselectorform->set_data($fromformdata);
 
 //Retrieve courses by web service
@@ -183,7 +182,7 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
 
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
-    $registrationmanager = new registration_manager();
+    $registrationmanager = new tool_customhub\registration_manager();
     $registeredhubs = $registrationmanager->get_registered_on_hubs();
     foreach ($registeredhubs as $registeredhub) {
         if ($huburl == $registeredhub->huburl) {
@@ -203,13 +202,13 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
         $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {
         $errormessage = $OUTPUT->notification(
-                        get_string('errorcourselisting', 'block_community', $e->getMessage()));
+                        get_string('errorcourselisting', 'block_customhub', $e->getMessage()));
     }
 }
 
 // OUTPUT
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
+echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_customhub'), 3, 'main');
 $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
@@ -228,9 +227,9 @@ if (!empty($courses)) {
         $courseimagenumbers[] = $course['screenshots'];
     }
 }
-$PAGE->requires->yui_module('moodle-block_community-comments', 'M.blocks_community.init_comments',
+$PAGE->requires->yui_module('moodle-block_customhub-comments', 'M.blocks_customhub.init_comments',
         array(array('commentids' => $commentedcourseids, 'closeButtonTitle' => get_string('close', 'editor'))));
-$PAGE->requires->yui_module('moodle-block_community-imagegallery', 'M.blocks_community.init_imagegallery',
+$PAGE->requires->yui_module('moodle-block_customhub-imagegallery', 'M.blocks_customhub.init_imagegallery',
         array(array('imageids' => $courseids, 'imagenumbers' => $courseimagenumbers,
                 'huburl' => $huburl, 'closeButtonTitle' => get_string('close', 'editor'))));
 

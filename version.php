@@ -17,13 +17,15 @@
 /**
  * Version details
  *
- * @package    block_community
+ * @package    block_customhub
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017051500;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2017050500;        // Requires this Moodle version
-$plugin->component = 'block_community'; // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2017112200;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2017111300;        // Requires this Moodle version
+$plugin->component = 'block_customhub'; // Full name of the plugin (used for diagnostics)
+
+$plugin->dependencies = array('tool_customhub' => 2017111602);

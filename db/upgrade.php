@@ -32,7 +32,7 @@
  * before any action that may take longer time to finish.
  *
  * @since Moodle 2.0
- * @package block_community
+ * @package block_customhub
  * @copyright 2010 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param int $oldversion
  */
-function xmldb_block_community_upgrade($oldversion) {
+function xmldb_block_customhub_upgrade($oldversion) {
     global $CFG;
 
     // Moodle v2.8.0 release upgrade line.

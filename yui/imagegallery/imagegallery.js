@@ -1,6 +1,6 @@
-YUI.add('moodle-block_community-imagegallery', function(Y) {
+YUI.add('moodle-block_customhub-imagegallery', function(Y) {
 
-    var IMAGEGALLERYNAME = 'blocks_community_imagegallery';
+    var IMAGEGALLERYNAME = 'blocks_customhub_imagegallery';
 
     var IMAGEGALLERY = function() {
         IMAGEGALLERY.superclass.constructor.apply(this, arguments);
@@ -196,8 +196,8 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
         }
     });
 
-    M.blocks_community = M.blocks_community || {};
-    M.blocks_community.init_imagegallery = function(params) {
+    M.blocks_customhub = M.blocks_customhub || {};
+    M.blocks_customhub.init_imagegallery = function(params) {
         return new IMAGEGALLERY(params);
     }
 

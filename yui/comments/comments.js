@@ -1,6 +1,6 @@
-YUI.add('moodle-block_community-comments', function(Y) {
+YUI.add('moodle-block_customhub-comments', function(Y) {
 
-    var COMMENTSNAME = 'blocks_community_comments';
+    var COMMENTSNAME = 'blocks_customhub_comments';
 
     var COMMENTS = function() {
         COMMENTS.superclass.constructor.apply(this, arguments);
@@ -87,8 +87,8 @@ YUI.add('moodle-block_community-comments', function(Y) {
         }
     });
 
-    M.blocks_community = M.blocks_community || {};
-    M.blocks_community.init_comments = function(params) {
+    M.blocks_customhub = M.blocks_customhub || {};
+    M.blocks_customhub.init_comments = function(params) {
         return new COMMENTS(params);
     }
 

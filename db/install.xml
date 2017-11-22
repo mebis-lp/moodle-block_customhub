@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/community/db" VERSION="20120122" COMMENT="XMLDB file for Moodle blocks/community"
+<XMLDB PATH="blocks/customhub/db" VERSION="20120122" COMMENT="XMLDB file for Moodle blocks/customhub"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_community" COMMENT="Community block">
+    <TABLE NAME="block_customhub" COMMENT="Customhub block">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

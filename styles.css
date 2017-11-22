@@ -1,73 +1,73 @@
 /** General display rules **/
 
 /* HUB SELECTOR */
-#page-blocks-community-communitycourse .hubscreenshot {
+#page-blocks-customhub-communitycourse .hubscreenshot {
     float: left;
 }
 
-#page-blocks-community-communitycourse .hubtitlelink {
+#page-blocks-customhub-communitycourse .hubtitlelink {
     color: #999;
 }
 
-#page-blocks-community-communitycourse .hubsmalllogo {
+#page-blocks-customhub-communitycourse .hubsmalllogo {
     padding-left: 3px;
     padding-right: 7px;
     float: left;
 }
 
-#page-blocks-community-communitycourse .hubtext {
+#page-blocks-customhub-communitycourse .hubtext {
     display: block;
     width: 68%;
     padding-left: 165px;
 }
 
-#page-blocks-community-communitycourse .hubimgandtext {
+#page-blocks-customhub-communitycourse .hubimgandtext {
     display: table;
 }
 
-#page-blocks-community-communitycourse .hubimage {
+#page-blocks-customhub-communitycourse .hubimage {
     float: left;
     display: block;
     width: 100px;
 }
 
-#page-blocks-community-communitycourse .hubstats {
+#page-blocks-customhub-communitycourse .hubstats {
     padding-top: 10px;
 }
 
-#page-blocks-community-communitycourse .hubstats .iconhelp {
+#page-blocks-customhub-communitycourse .hubstats .iconhelp {
     float: left;
     padding-right: 3px;
 }
 
-#page-blocks-community-communitycourse .hubadditionaldesc {
+#page-blocks-customhub-communitycourse .hubadditionaldesc {
     color: #666;
     font-size: 90%;
     display: block;
 }
 
-#page-blocks-community-communitycourse .hubscreenshot {
+#page-blocks-customhub-communitycourse .hubscreenshot {
     margin-right: 10px;
 }
 
-#page-blocks-community-communitycourse .hubtrusted {
+#page-blocks-customhub-communitycourse .hubtrusted {
     display: inline;
 }
 
-#page-blocks-community-communitycourse .trustedtr {
+#page-blocks-customhub-communitycourse .trustedtr {
     background-color: #ffe1c3;
 }
 
-#page-blocks-community-communitycourse .prioritisetr {
+#page-blocks-customhub-communitycourse .prioritisetr {
     background-color: #ffd4ff;
 }
 
-#page-blocks-community-communitycourse .blockdescription {
+#page-blocks-customhub-communitycourse .blockdescription {
     font-size: 80%;
     color: #555;
 }
 
-#page-blocks-community-communitycourse .trusted {
+#page-blocks-customhub-communitycourse .trusted {
     font-size: 90%;
     color: #063;
     font-weight: normal;
@@ -75,72 +75,72 @@
 }
 
 /* COURSES RESULT */
-#page-blocks-community-communitycourse .additionaldesc {
+#page-blocks-customhub-communitycourse .additionaldesc {
     font-size: 80%;
     color: #8b8989;
 }
 
-#page-blocks-community-communitycourse .comment-link {
+#page-blocks-customhub-communitycourse .comment-link {
     font-size: 80%;
     color: #555;
 }
 
-#page-blocks-community-communitycourse .coursescreenshot {
+#page-blocks-customhub-communitycourse .coursescreenshot {
     text-align: center;
     cursor: pointer;
 }
 
-#page-blocks-community-communitycourse .hubcourseinfo {
+#page-blocks-customhub-communitycourse .hubcourseinfo {
     margin-left: 15px;
 }
 
-#page-blocks-community-communitycourse .pagingbar {
+#page-blocks-customhub-communitycourse .pagingbar {
     text-align: center;
 }
 
-#page-blocks-community-communitycourse .coursecomment {
+#page-blocks-customhub-communitycourse .coursecomment {
     float: right;
 }
 
-#page-blocks-community-communitycourse .courseoperations {
+#page-blocks-customhub-communitycourse .courseoperations {
     margin-top: 9px;
     text-align: center;
 }
 
-#page-blocks-community-communitycourse .hubcoursedownload:hover {
+#page-blocks-customhub-communitycourse .hubcoursedownload:hover {
     background-color: #cdc9c9;
 }
 
-#page-blocks-community-communitycourse .courselinks {
+#page-blocks-customhub-communitycourse .courselinks {
     float: right;
     width: 180px;
 }
 
-#page-blocks-community-communitycourse .ratingaggregate {
+#page-blocks-customhub-communitycourse .ratingaggregate {
     float: left;
     padding-right: 4px;
 }
 
-#page-blocks-community-communitycourse .hubcourserating {
+#page-blocks-customhub-communitycourse .hubcourserating {
     padding-top: 3px;
     font-size: 80%;
     color: #555;
 }
 
-#page-blocks-community-communitycourse .coursedescription {
+#page-blocks-customhub-communitycourse .coursedescription {
     width: 70%;
     float: left;
 }
 
-#page-blocks-community-communitycourse .fullhubcourse {
+#page-blocks-customhub-communitycourse .fullhubcourse {
     margin-bottom: 20px;
 }
 
-#page-blocks-community-communitycourse .hubcoursetitlepanel {
+#page-blocks-customhub-communitycourse .hubcoursetitlepanel {
     margin-bottom: 6px;
 }
 
-#page-blocks-community-communitycourse .hubcourseresult {
+#page-blocks-customhub-communitycourse .hubcourseresult {
     background: none repeat scroll 0 0 #fff;
     clear: both;
     margin: 30px auto 0;
@@ -151,7 +151,7 @@
     border-width: 1px;
 }
 
-#page-blocks-community-communitycourse .hubcoursetitle {
+#page-blocks-customhub-communitycourse .hubcoursetitle {
     -webkit-box-shadow: rgba(0, 0, 0, 0.546875) 0 0 4px;
     -moz-box-shadow: rgba(0, 0, 0, 0.546875) 0 0 4px;
     background: #8b8989;
@@ -176,7 +176,7 @@
     text-indent: 15px;
 }
 
-#page-blocks-community-communitycourse .hubcoursedownload {
+#page-blocks-customhub-communitycourse .hubcoursedownload {
     display: inline-block;
     padding: 5px 8px 6px;
     color: black;
@@ -195,19 +195,19 @@
 }
 
 /*  STAR RATING  */
-#page-blocks-community-communitycourse .ratingcount {
+#page-blocks-customhub-communitycourse .ratingcount {
     color: #8b8989;
     font-size: 80%;
     vertical-align: top;
 }
 
-#page-blocks-community-communitycourse .norating {
+#page-blocks-customhub-communitycourse .norating {
     font-weight: bold;
     color: #8b8989;
     font-size: 80%;
 }
 
-#page-blocks-community-communitycourse .star-rating {
+#page-blocks-customhub-communitycourse .star-rating {
     list-style: none;
     margin: 4px 0 4px;
     padding: 0;
@@ -218,7 +218,7 @@
     float: left;
 }
 
-#page-blocks-community-communitycourse .star-rating li {
+#page-blocks-customhub-communitycourse .star-rating li {
     padding: 0;
     margin: 0;
     height: 20px;
@@ -226,7 +226,7 @@
     float: left;
 }
 
-#page-blocks-community-communitycourse .star-rating li.current-rating {
+#page-blocks-customhub-communitycourse .star-rating li.current-rating {
     background: url([[pix:i/star-rating]]) left bottom;
     position: absolute;
     height: 20px;
@@ -236,30 +236,30 @@
 }
 
 /* COMMENTS */
-#page-blocks-community-communitycourse .nocomments {
+#page-blocks-customhub-communitycourse .nocomments {
     font-weight: bold;
     color: #8b8989;
     font-size: 80%;
 }
 
-#page-blocks-community-communitycourse .hubcommentator {
+#page-blocks-customhub-communitycourse .hubcommentator {
     float: left;
     font-weight: bold;
 }
 
-#page-blocks-community-communitycourse .hubcommentdate {
+#page-blocks-customhub-communitycourse .hubcommentdate {
     font-weight: bold;
 }
 
-#page-blocks-community-communitycourse .hubcommenttext {
+#page-blocks-customhub-communitycourse .hubcommenttext {
     margin-bottom: 10px;
 }
 
-#page-blocks-community-communitycourse .hubnoscriptcoursecomments {
+#page-blocks-customhub-communitycourse .hubnoscriptcoursecomments {
     margin-left: 5px;
 }
 
-#page-blocks-community-communitycourse .yui3-overlay-loading {
+#page-blocks-customhub-communitycourse .yui3-overlay-loading {
     /* Hide overlay markup while loading, if js is enabled */
     top: -1000em;
     left: -1000em;
@@ -267,7 +267,7 @@
     z-index: 1000;
 }
 
-#page-blocks-community-communitycourse .hubcoursecomments {
+#page-blocks-customhub-communitycourse .hubcoursecomments {
     /* comment button */
     display: inline-block;
     padding: 3px 3px 3px 3px;
@@ -283,16 +283,16 @@
     margin-top: 15px;
 }
 
-#page-blocks-community-communitycourse .hubrateandcomment {
+#page-blocks-customhub-communitycourse .hubrateandcomment {
     font-size: 80%;
 }
 
-#page-blocks-community-communitycourse .nextlink {
+#page-blocks-customhub-communitycourse .nextlink {
     text-align: center;
     margin-top: 6px;
 }
 
-#page-blocks-community-communitycourse .textinfo {
+#page-blocks-customhub-communitycourse .textinfo {
     text-align: center;
 }
 
@@ -324,7 +324,7 @@
     cursor: pointer;
 }
 
-#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue {
+#page-blocks-customhub-communitycourse .moodle-dialogue-base .moodle-dialogue {
     -moz-border-radius: 12px 12px 12px 12px;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     -webkit-border-radius: 12px 12px 12px 12px;
@@ -332,14 +332,14 @@
     border-width: 0 0 0 0;
 }
 
-#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-wrap {
+#page-blocks-customhub-communitycourse .moodle-dialogue-base .moodle-dialogue-wrap {
     -moz-border-radius: 12px 12px 0 0;
     -webkit-border-radius: 12px 12px 0 0;
     background-color: #fff;
     border: 1px solid #555;
 }
 
-#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-hd {
+#page-blocks-customhub-communitycourse .moodle-dialogue-base .moodle-dialogue-hd {
     -moz-border-radius: 12px 12px 0 0;
     -webkit-border-radius: 12px 12px 0 0;
     background-color: #f6f6f6;
@@ -348,12 +348,12 @@
     padding: 7px 6px;
 }
 
-#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-bd {
+#page-blocks-customhub-communitycourse .moodle-dialogue-base .moodle-dialogue-bd {
     padding: 0;
     margin-bottom: -5px;
 }
 
-#page-blocks-community-communitycourse .moodle-dialogue-base .closebutton {
+#page-blocks-customhub-communitycourse .moodle-dialogue-base .closebutton {
     margin-top: 4px;
     margin-right: 4px;
 }
