@@ -34,6 +34,77 @@ require_once($CFG->dirroot . '/blocks/customhub/hublisting.php');
 
 class block_customhub_search_form extends moodleform {
 
+    const BLOCK_CUSTOMHUB_HUB_HUBDIRECTORYURL = 'https://hubdirectory.moodle.org';
+
+    protected function get_standad_hubs_list() {
+        return $this->get_standard_hubs_list_from_hubdirectory();
+        // This will return something like this.
+        /*
+        return [[
+            'id' => 62,
+            'name' => 'Moodle.net',
+            'description' => 'Moodle.net (previously known as MOOCH) connects you with free content and courses shared by Moodle users all over the world.  It contains:
+
+* courses you can download and use
+* courses you can enrol in and participate
+* other content you can import into your own courses',
+            'language' => 'en',
+            'url' => 'https://moodle.net',
+            'trusted' => 1,
+            'sites' => 187801,
+            'courses' => 290,
+            'timemodified' => 1416283567,
+            'enrollablecourses' => 152,
+            'downloadablecourses' => 138,
+            'smalllogohtml' => '<img src="https://hubdirectory.moodle.org/local/hubdirectory/webservice/download.php?hubid=62&amp;filetype=hubscreenshot" alt="Moodle.net" height="30" width="40" />',
+            'hubimage' => '<div class="hubimage"><img src="https://hubdirectory.moodle.org/local/hubdirectory/webservice/download.php?hubid=62&amp;filetype=hubscreenshot" alt="Moodle.net" /></div>'
+        ]];
+        */
+    }
+
+    protected function get_standard_hubs_list_from_hubdirectory() {
+        global $CFG, $OUTPUT;
+
+        //retrieve the hub list on the hub directory by web service
+        $function = 'hubdirectory_get_hubs';
+        $params = array();
+        $serverurl = self::BLOCK_CUSTOMHUB_HUB_HUBDIRECTORYURL. "/local/hubdirectory/webservice/webservices.php";
+        require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
+        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, 'publichubdirectory');
+        try {
+            $hubs = $xmlrpcclient->call($function, $params);
+        } catch (Exception $e) {
+            $hubs = array();
+            $error = $OUTPUT->notification(get_string('errorhublisting', 'block_customhub', $e->getMessage()));
+            $this->_form->addElement('static', 'errorhub', '', $error);
+        }
+
+        foreach ($hubs as $key => $hub) {
+            if ($hub['url'] === HUB_OLDMOODLEORGHUBURL) {
+                // Hubdirectory returns old URL for the moodle.net hub, substitute it.
+                $hubs[$key]['url'] = HUB_MOODLEORGHUBURL;
+            }
+
+            // Retrieve hub logo + generate small logo.
+            $params = array('hubid' => $hub['id'], 'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
+            $imgurl = new moodle_url(self::BLOCK_CUSTOMHUB_HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
+
+            // The following code is commented out because extra requests slow down the page rendering. Assume all images are present.
+
+            //$imgsize = getimagesize($imgurl->out(false));
+            //$ascreenshothtml = '';
+            //if ($imgsize[0] > 1) {
+                $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hub['name']));
+                $hubs[$key]['smalllogohtml'] = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hub['name'],
+                    'height' => 30, 'width' => 40));
+            //}
+            $hubs[$key]['hubimage'] = html_writer::tag('div', $ascreenshothtml, array('class' => 'hubimage'));
+
+        }
+
+        return $hubs;
+    }
+
     public function definition() {
         global $CFG, $USER, $OUTPUT;
         $strrequired = get_string('required');
@@ -95,26 +166,8 @@ class block_customhub_search_form extends moodleform {
         $mform->addElement('hidden', 'executesearch', 1);
         $mform->setType('executesearch', PARAM_INT);
 
-        //retrieve the hub list on the hub directory by web service
-        $function = 'hubdirectory_get_hubs';
-        $params = array();
-        $serverurl = HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/webservices.php";
-        require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
-        $xmlrpcclient = new webservice_xmlrpc_client($serverurl, 'publichubdirectory');
-        try {
-            $hubs = $xmlrpcclient->call($function, $params);
-        } catch (Exception $e) {
-            $hubs = array();
-            $error = $OUTPUT->notification(get_string('errorhublisting', 'block_customhub', $e->getMessage()));
-            $mform->addElement('static', 'errorhub', '', $error);
-        }
-
-        // Hubdirectory returns old URL for the moodle.net hub, substitute it.
-        foreach ($hubs as $key => $hub) {
-            if ($hub['url'] === HUB_OLDMOODLEORGHUBURL) {
-                $hubs[$key]['url'] = HUB_MOODLEORGHUBURL;
-            }
-        }
+        // Retrieve list of standard hubs (used to be requested from hubdirectory but now hardcoded).
+        $hubs = $this->get_standad_hubs_list();
 
         //display list of registered on hub
         $registrationmanager = new tool_customhub\registration_manager();
@@ -149,18 +202,8 @@ class block_customhub_search_form extends moodleform {
                 $smalllogohtml = '';
                 if (array_key_exists('id', $hub)) {
 
-                    // Retrieve hub logo + generate small logo.
-                    $params = array('hubid' => $hub['id'], 'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
-                    $imgurl = new moodle_url(HUB_HUBDIRECTORYURL . "/local/hubdirectory/webservice/download.php", $params);
-                    $imgsize = getimagesize($imgurl->out(false));
-                    if ($imgsize[0] > 1) {
-                        $ascreenshothtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hubname));
-                        $smalllogohtml = html_writer::empty_tag('img', array('src' => $imgurl, 'alt' => $hubname
-                                        , 'height' => 30, 'width' => 40));
-                    } else {
-                        $ascreenshothtml = '';
-                    }
-                    $hubimage = html_writer::tag('div', $ascreenshothtml, array('class' => 'hubimage'));
+                    $smolllogohtml = isset($hub['smalllogohtml']) ? $hub['smalllogohtml'] : '';
+                    $hubimage = isset($hub['hubimage']) ? $hub['hubimage'] : '';
 
                     // Statistics + trusted info.
                     $hubstats = '';
@@ -206,7 +249,7 @@ class block_customhub_search_form extends moodleform {
             $mform->setDefault('huburl', $huburl);
 
             //display enrol/download select box if the USER has the download capability on the course
-            if (has_capability('moodle/community:download',
+            if (has_capability('block/customhub:downloadcommunity',
                             context_course::instance($this->_customdata['courseid']))) {
                 $options = array(0 => get_string('enrollable', 'block_customhub'),
                     1 => get_string('downloadable', 'block_customhub'));

@@ -24,8 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017112200;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2017112400; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release   = '1.0';
 $plugin->requires  = 2017111300;        // Requires this Moodle version
 $plugin->component = 'block_customhub'; // Full name of the plugin (used for diagnostics)
 
-$plugin->dependencies = array('tool_customhub' => 2017111602);
+$plugin->dependencies = array('tool_customhub' => 2017112400);

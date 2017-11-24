@@ -33,7 +33,7 @@ $capabilities = array(
             'user' => CAP_ALLOW
         ),
 
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
+        'clonepermissionsfrom' => 'block/community:myaddinstance'
     ),
 
     'block/customhub:addinstance' => array(
@@ -45,7 +45,27 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+        'clonepermissionsfrom' => 'block/community:addinstance'
     ),
+
+    'block/customhub:addcommunity' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/community:add'
+    ),
+    'block/customhub:downloadcommunity' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/community:download'
+    ),
+
 );

@@ -31,7 +31,7 @@ class block_customhub extends block_list {
 
     function user_can_addto($page) {
         // Don't allow people to add the block if they can't even use it
-        if (!has_capability('moodle/community:add', $page->context)) {
+        if (!has_capability('block/customhub:addcommunity', $page->context)) {
             return false;
         }
 
@@ -40,7 +40,7 @@ class block_customhub extends block_list {
 
     function user_can_edit() {
         // Don't allow people to edit the block if they can't even use it
-        if (!has_capability('moodle/community:add',
+        if (!has_capability('block/customhub:addcommunity',
                         context::instance_by_id($this->instance->parentcontextid))) {
             return false;
         }
@@ -52,7 +52,7 @@ class block_customhub extends block_list {
 
         $coursecontext = context::instance_by_id($this->instance->parentcontextid);
 
-        if (!has_capability('moodle/community:add', $coursecontext)
+        if (!has_capability('block/customhub:addcommunity', $coursecontext)
                 or $this->content !== NULL) {
             return $this->content;
         }

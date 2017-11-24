@@ -47,8 +47,8 @@ $PAGE->navbar->add(get_string('searchcourse', 'block_customhub'));
 $search = optional_param('search', null, PARAM_TEXT);
 
 //if no capability to search course, display an error message
-$usercansearch = has_capability('moodle/community:add', $context);
-$usercandownload = has_capability('moodle/community:download', $context);
+$usercansearch = has_capability('block/customhub:addcommunity', $context);
+$usercandownload = has_capability('block/customhub:downloadcommunity', $context);
 if (empty($usercansearch)) {
     $notificationerror = get_string('cannotsearchcommunity', 'block_customhub');
 } else if (!extension_loaded('xmlrpc')) {
