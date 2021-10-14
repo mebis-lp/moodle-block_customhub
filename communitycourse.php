@@ -179,21 +179,24 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
 
     //the range of course requested
     $options->givememore = optional_param('givememore', 0, PARAM_INT);
-
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
     $registrationmanager = new tool_customhub\registration_manager();
     $registeredhubs = $registrationmanager->get_registered_on_hubs();
     foreach ($registeredhubs as $registeredhub) {
-        if ($huburl == $registeredhub->huburl) {
-            $token = $registeredhub->token;
-        }
+        $huburl = $registeredhub->huburl;
+        $token = $registeredhub->token;
+        // if ($huburl == $registeredhub->huburl) {
+        //     $token = $registeredhub->token;
+        // }
     }
 
     $function = 'hub_get_courses';
     $params = array('search' => $search, 'downloadable' => $downloadable,
         'enrollable' => intval(!$downloadable), 'options' => $options);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
+
+    
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
     try {

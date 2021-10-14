@@ -83,7 +83,7 @@ class block_customhub_manager {
     public function block_customhub_download_course_backup($course) {
         global $CFG, $USER;
         require_once($CFG->libdir . "/filelib.php");
-        require_once($CFG->dirroot. "/course/publish/lib.php");
+        // require_once($CFG->dirroot. "/course/publish/lib.php");
 
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;
