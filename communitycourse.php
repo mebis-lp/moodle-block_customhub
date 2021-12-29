@@ -30,7 +30,11 @@
 
 require('../../config.php');
 require_once($CFG->dirroot . '/blocks/customhub/locallib.php');
-require_once($CFG->dirroot . '/blocks/customhub/forms.php');
+// require_once($CFG->dirroot . '/blocks/customhub/forms.php');
+
+$registrationmanager = new tool_customhub\registration_manager();
+$registeredhubs = $registrationmanager->get_registered_on_hubs();
+$registeredhub = array_shift($registeredhubs);
 
 require_login();
 $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
@@ -135,22 +139,24 @@ if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
     die();
 }
 
+
+
 //Get form default/current values
 $fromformdata['coverage'] = optional_param('coverage', 'all', PARAM_TEXT);
 $fromformdata['licence'] = optional_param('licence', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['subject'] = optional_param('subject', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['audience'] = optional_param('audience', 'all', PARAM_ALPHANUMEXT);
-$fromformdata['language'] = optional_param('language', current_language(), PARAM_ALPHANUMEXT);
+$fromformdata['language'] = optional_param('language', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['educationallevel'] = optional_param('educationallevel', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['downloadable'] = optional_param('downloadable', $usercandownload, PARAM_ALPHANUM);
 $fromformdata['orderby'] = optional_param('orderby', 'newest', PARAM_ALPHA);
-$fromformdata['huburl'] = optional_param('huburl', HUB_MOODLEORGHUBURL, PARAM_URL);
+$fromformdata['huburl'] = optional_param('huburl', $registeredhub->huburl /*HUB_MOODLEORGHUBURL*/, PARAM_URL);
 $fromformdata['search'] = $search;
 $fromformdata['courseid'] = $courseid;
-$hubselectorform = new block_customhub_search_form('', $fromformdata);
+$hubselectorform = new \block_customhub\form\block_customhub_search_form('', $fromformdata);
 $hubselectorform->set_data($fromformdata);
 
-//Retrieve courses by web service
+// Retrieve courses by web service
 $courses = null;
 if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     $downloadable = optional_param('downloadable', false, PARAM_INT);
@@ -181,8 +187,7 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     $options->givememore = optional_param('givememore', 0, PARAM_INT);
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
-    $registrationmanager = new tool_customhub\registration_manager();
-    $registeredhubs = $registrationmanager->get_registered_on_hubs();
+
     foreach ($registeredhubs as $registeredhub) {
         $huburl = $registeredhub->huburl;
         $token = $registeredhub->token;

@@ -26,12 +26,17 @@
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @deprecated
  */
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/customhub/constants.php');
 require_once($CFG->dirroot . '/blocks/customhub/hublisting.php');
 
+/**
+ * Form for community search
+ * @deprecated
+ */
 class block_customhub_search_form extends moodleform {
 
     const BLOCK_CUSTOMHUB_HUB_HUBDIRECTORYURL = 'https://hubdirectory.moodle.org';
