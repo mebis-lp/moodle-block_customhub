@@ -93,9 +93,6 @@ class block_customhub_manager {
         make_temp_directory('backup');
 
         $filename = md5(time() . '-' . $course->id . '-'. $USER->id . '-'. random_string(20));
-$fo = fopen(__DIR__ . "/../../local/hub/log.txt", "a+");
-        fwrite($fo, "\n" . json_encode($filename));
-        fwrite($fo, "\n" . json_encode($params));
 
         $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
         $path = $CFG->tempdir.'/backup/'.$filename.".mbz";
@@ -110,13 +107,11 @@ $fo = fopen(__DIR__ . "/../../local/hub/log.txt", "a+");
             $token = $registeredhub->token;
             $curlurl .= '&token='.$token;
         }
-        fwrite($fo, "\n" . $curlurl);
 
         $ch = curl_init($curlurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
 
-        // fwrite($fo, "\n" . json_encode($data)); die;
         curl_close($ch);
         fclose($fp);
 
