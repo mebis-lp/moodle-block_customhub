@@ -267,14 +267,26 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //Create add button html
                 $addbuttonhtml = "";
                 if ($course->enrollable) {
-                    $params = array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
-                        'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
-                        'coursedescription' => $course->description,
-                        'courseid' => $contextcourseid);
+                    $params = [
+                        'sesskey' => sesskey(),
+                        'add' => 1,
+                        'confirmed' => 1,
+                        'courseid' => $contextcourseid,
+                        // 'coursefullname' => $course->fullname,
+                        // 'courseurl' => $courseurl,
+                        // 'coursedescription' => $course->description,
+                        'crid' => $course->id,
+                    ];
+
                     $addurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
-                    $addbuttonhtml = html_writer::tag('a',
-                                    get_string('addtocommunityblock', 'block_customhub'),
-                                    array('href' => $addurl, 'class' => 'centeredbutton, hubcoursedownload'));
+                    $addbuttonhtml = html_writer::tag(
+                        'a',
+                        get_string('addtocommunityblock', 'block_customhub'),
+                        [
+                            'href' => $addurl,
+                            'class' => 'centeredbutton, hubcoursedownload'
+                        ]
+                    );
                 }
 
                 //create download button html

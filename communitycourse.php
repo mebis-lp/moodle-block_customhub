@@ -28,9 +28,15 @@
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  */
 
+// global $SESSION;
+
+// print_r($SESSION);die;
+
 require('../../config.php');
 require_once($CFG->dirroot . '/blocks/customhub/locallib.php');
+require_once($CFG->dirroot . '/blocks/customhub/classes/local/block_customhub_helper.php');
 // require_once($CFG->dirroot . '/blocks/customhub/forms.php');
+$customhubhelper = new \block_customhub\local\block_customhub_helper();
 
 $registrationmanager = new tool_customhub\registration_manager();
 $registeredhubs = $registrationmanager->get_registered_on_hubs();
@@ -74,12 +80,20 @@ $renderer = $PAGE->get_renderer('block_customhub');
 $add = optional_param('add', -1, PARAM_INT);
 $confirm = optional_param('confirmed', false, PARAM_INT);
 if ($add != -1 and $confirm and confirm_sesskey()) {
-    $course = new stdClass();
-    $course->name = optional_param('coursefullname', '', PARAM_TEXT);
-    $course->description = optional_param('coursedescription', '', PARAM_TEXT);
-    $course->url = optional_param('courseurl', '', PARAM_URL);
-    $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
-    $customhubmanager->block_customhub_add_course($course, $USER->id);
+    require_once($CFG->dirroot . "/blocks/customhub/classes/local/block_customhub_helper.php");
+    $courseregid = required_param('crid', PARAM_INT);
+    // print(json_encode($SESSION->hubcourselist));die;
+
+    // $course = new stdClass();
+    // $course->name = optional_param('coursefullname', '', PARAM_TEXT);
+    // $course->description = optional_param('coursedescription', '', PARAM_TEXT);
+    // $course->url = optional_param('courseurl', '', PARAM_URL);
+    // $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
+
+    $helper = new \block_customhub\local\block_customhub_helper();
+    $helper->create_collaboration_course($SESSION->hubcourselist[$courseregid]);
+
+    // $customhubmanager->block_customhub_add_course($course, $USER->id);
     echo $OUTPUT->header();
     echo $renderer->save_link_success(
             new moodle_url('/course/view.php', array('id' => $courseid)));
@@ -207,6 +221,10 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     try {
         $result = $xmlrpcclient->call($function, array_values($params));
         $courses = $result['courses'];
+        $SESSION->hubcourselist = $customhubhelper->set_courseregid_as_key($courses);
+        if(empty($SESSION->hubcourselist)){
+            echo "USER->hubcourselist nicht geschrieben";die;
+        }
         $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {
         $errormessage = $OUTPUT->notification(
