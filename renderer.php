@@ -77,15 +77,15 @@ class block_customhub_renderer extends plugin_renderer_base {
      * @param moodle_url $url the page to be redirected to
      * @return string html
      */
-    public function save_link_success(moodle_url $url) {
-        $html = $this->output->notification(get_string('addedtoblock', 'block_customhub'),
-                    'notifysuccess');
-        $continuebutton = new single_button($url,
-                        get_string('continue', 'block_customhub'));
-        $html .= html_writer::tag('div', $this->output->render($continuebutton),
-                array('class' => 'continuebutton'));
-        return $html;
-    }
+    // public function save_link_success(moodle_url $url) {
+    //     $html = $this->output->notification(get_string('addedtoblock', 'block_customhub'),
+    //                 'notifysuccess');
+    //     $continuebutton = new single_button($url,
+    //                     get_string('continue', 'block_customhub'));
+    //     $html .= html_writer::tag('div', $this->output->render($continuebutton),
+    //             array('class' => 'continuebutton'));
+    //     return $html;
+    // }
 
     /**
      * The 'Next'/'more course result' link for a courses search
@@ -119,19 +119,16 @@ class block_customhub_renderer extends plugin_renderer_base {
             foreach ($courses as $course) {
                 $course = (object) $course;
                 $courseiteration = $courseiteration + 1;
-
                 //create visit link html
-                if (!empty($course->courseurl)) {
-                    $courseurl = new moodle_url($course->courseurl);
-                    $linktext = get_string('visitsite', 'block_customhub');
-                } else {
+                $visitlinkhtml = "";
+                if (empty($course->enrollable)) {
                     $courseurl = new moodle_url($course->demourl);
                     $linktext = get_string('visitdemo', 'block_customhub');
+                    $visitlinkhtml = html_writer::tag('a', $linktext,
+                                    array('href' => $courseurl, 'class' => 'hubcoursedownload',
+                                        'onclick' => 'this.target="_blank"'));
                 }
 
-                $visitlinkhtml = html_writer::tag('a', $linktext,
-                                array('href' => $courseurl, 'class' => 'hubcoursedownload',
-                                    'onclick' => 'this.target="_blank"'));
 
                 //create title html
                 $coursename = html_writer::tag('h3', $course->fullname,
@@ -373,6 +370,7 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //                 array('class' => 'hubrateandcomment'));
 
                 //the main DIV tags
+
                 $buttonsdiv = html_writer::tag('div',
                                 $addbuttonhtml . $downloadbuttonhtml . $visitlinkhtml,
                                 array('class' => 'courseoperations'));

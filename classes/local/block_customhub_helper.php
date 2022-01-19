@@ -49,10 +49,32 @@ class block_customhub_helper {
     /* Use mod_lti plugin */
     const SINGLE_ACTIVITY_COURSE_MODULE = 'lti';
 
+    /* TODO: Make the parent category editable config. */
+    const PARENT_CATEGORY = 8;
+
+    const CONTAINER_NEW_EMBED = 2;
+    const CONTAINER_NEW_EMBED_WITHOUT_BLOCKS = 3;
+    const CONTAINER_NEW_WINDOW = 4;
+    const CONTAINER_NEW_EXISTING_WINDOW = 5;
+
+    /**
+     * Create the collaboration course with mod_external.
+     * @param object $coursedata
+     * @return object $course
+     */
     public function create_collaboration_course($coursedata) {
+        global $DB;
         $ccat = $this->create_collaboration_course_category();
         $course = $this->create_course($ccat, $coursedata);
-        $this->create_enrolment($course, 'manual');
+        $enrolinstance = $this->create_enrolment($course, 'manual');
+
+        // There's only the possibility "role -> student" to enrol users to this auto-course. 
+        // Otherwise users were able to manipulate the course and see others gradings etc.
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->enrol_user($studentrole, $enrolinstance);
+
+        $this->create_lti_module($coursedata, $course);
+        return $course;
     }
 
     /**
@@ -69,7 +91,8 @@ class block_customhub_helper {
             $generator = new \testing_data_generator();
             $record = [
                 'name' => self::COLLABORATION_COURSECATEGORY_NAME,
-                'parent' => 0,
+                'parent' => self::PARENT_CATEGORY,
+                // 'parent' => 0,
                 'descriptionformat' => 0,
                 'visible' => 1,
                 'description' => '',
@@ -78,9 +101,15 @@ class block_customhub_helper {
         }
         return $coursecat;
     }
-    
+
+    /**
+     * Create cousre
+     * @param object $ccat Record of course_categories table
+     * @param object $coursedata Submitted course data.
+     * @return object $course
+     */
     public function create_course($ccat, $coursedata) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir . '/testing/generator/data_generator.php');
         $generator = new \testing_data_generator();
 
@@ -96,17 +125,18 @@ class block_customhub_helper {
         ];
 
         // Create the local course if not exists.
-        if ($course = $DB->get_record('{course}', ['idnumber' => $idnumber])) {
+        if (!$course = $DB->get_record('course', ['idnumber' => $coursedata->id])) {
             $course = $generator->create_course($courserecord, ['createsections' => true]);
         }
 
         return $course;
     }
 
-    public function get_course_registration_data($courseregid) {
-        
-    }
-
+    /**
+     * Set the courseregid as id in $courselist
+     * @param array $courselist
+     * @return array $courses
+     */
     public function set_courseregid_as_key($courslist) {
         $courses = [];
         foreach($courslist as $course){
@@ -114,25 +144,6 @@ class block_customhub_helper {
         }
         return $courses;
     }
-
-
-    // public function create_mod_lti($course, $url, $pwd) {
-    //         /**
-    //  * Create mod_label
-    //  * @param object $course
-    //  * @param array $result
-    //  * @param string $intro
-    //  */
-    //     $generator = \core\testing\generator::instance();
-    //     $modgenerator = $generator->get_plugin_generator('mod_label');
-    //     $record = [
-    //         'course' => $course->id,
-    //         'intro' => $intro,
-    //         'idnumber' => $result['external_id'],
-    //         'section' => $result['metadata']['supplementary_content'],
-    //     ];
-    //     $modgenerator->create_instance($record);
-    // }
 
     /**
      * Get unused Shortname
@@ -150,18 +161,71 @@ class block_customhub_helper {
         return $shortname . $seperator . $i;
     }
 
-    private function course_exists($idnumber) { 
+    /**
+     * Check if course exists.
+     * @param array $conditions
+     * @return bool
+     */
+    private function course_exists($conditions) { 
         global $DB;
-        return $DB->record_exists('{course}', ['idnumber' => $idnumber]);
+        return $DB->record_exists('course', $conditions);
     }
 
+    /**
+     * Create Enrolment methode
+     * @param object $course
+     * @param string $type enrolment methode
+     * @return object enrolment instance
+     */
     private function create_enrolment($course, $type = "manual") {
+        global $DB;
         $plugin = enrol_get_plugin($type);
-        $plugin->add_instance($course, $plugin->get_instance_defaults());
+        if (!$enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol'=>$type])) {
+            $enrolinstanceid = $plugin->add_instance($course, $plugin->get_instance_defaults());
+            $enrolinstance = $DB->get_record('enrol', ['id' => $enrolinstanceid]);
+        }
+        return $enrolinstance;
     }
 
-    private function enrol_user($course) {
+    /**
+     * Enrol a user to a course.
+     * @param object $role
+     * @param object $enrolinstance
+     */
+    private function enrol_user($role, $enrolinstance) {
         global $USER;
+        $enrolplugin = enrol_get_plugin($enrolinstance->enrol);
+        $enrolplugin->enrol_user($enrolinstance, $USER->id, $role->id);  
     }
 
+    /**
+     * Create lti module instance
+     * @param object $coursedata
+     * @param object $course
+     */
+    private function create_lti_module($coursedata, $course) {
+        global $CFG;
+        require_once($CFG->libdir . '/testing/generator/lib.php');
+        require_once($CFG->libdir . '/testing/generator/data_generator.php');
+        $generator = new \testing_data_generator();
+        $modgenerator = $generator->get_plugin_generator('mod_lti');
+        $coverage = json_decode($coursedata->coverage);
+        $record = [
+            'typename' => 'Test Einschreibung',
+            'course' => $course->id,
+            'toolurl' => $coursedata->courseurl,
+            // 'password' => $coursedata->secret,
+            'password' => $coverage->secret,
+            'resourcekey' => 'teachSHARE',
+            // 'instructorchoicesendname',
+            // 'instructorchoicesendemailaddr',
+            // 'instructorchoiceacceptgrades',
+            // 'typeid',
+            'ltiversion' => 'LTI-1p0',
+            'launchcontainer' => self::CONTAINER_NEW_WINDOW
+        ];
+
+        // print_r($record);die;
+        $modgenerator->create_instance($record);
+    }
 }

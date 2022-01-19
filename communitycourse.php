@@ -43,7 +43,11 @@ $registeredhubs = $registrationmanager->get_registered_on_hubs();
 $registeredhub = array_shift($registeredhubs);
 
 require_login();
-$courseid = required_param('courseid', PARAM_INT); //if no courseid is given
+try {
+    $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
+} catch (Exception $e) {
+    redirect($CFG->wwwroot . '/my');
+}
 $parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $context = context_course::instance($courseid);
@@ -82,22 +86,17 @@ $confirm = optional_param('confirmed', false, PARAM_INT);
 if ($add != -1 and $confirm and confirm_sesskey()) {
     require_once($CFG->dirroot . "/blocks/customhub/classes/local/block_customhub_helper.php");
     $courseregid = required_param('crid', PARAM_INT);
-    // print(json_encode($SESSION->hubcourselist));die;
-
-    // $course = new stdClass();
-    // $course->name = optional_param('coursefullname', '', PARAM_TEXT);
-    // $course->description = optional_param('coursedescription', '', PARAM_TEXT);
-    // $course->url = optional_param('courseurl', '', PARAM_URL);
-    // $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
 
     $helper = new \block_customhub\local\block_customhub_helper();
-    $helper->create_collaboration_course($SESSION->hubcourselist[$courseregid]);
+    $collaborationcourse = $helper->create_collaboration_course($SESSION->hubcourselist[$courseregid]);
 
-    // $customhubmanager->block_customhub_add_course($course, $USER->id);
-    echo $OUTPUT->header();
-    echo $renderer->save_link_success(
-            new moodle_url('/course/view.php', array('id' => $courseid)));
-    echo $OUTPUT->footer();
+    if(empty($collaborationcourse)) {
+        redirect($CFG->wwwroot . '/my');
+        die;
+    }
+
+    // After creation, redirect the user to the created course.
+    redirect($CFG->wwwroot . '/course/view.php?id=' . $collaborationcourse->id );
     die();
 }
 
@@ -222,9 +221,6 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
         $result = $xmlrpcclient->call($function, array_values($params));
         $courses = $result['courses'];
         $SESSION->hubcourselist = $customhubhelper->set_courseregid_as_key($courses);
-        if(empty($SESSION->hubcourselist)){
-            echo "USER->hubcourselist nicht geschrieben";die;
-        }
         $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {
         $errormessage = $OUTPUT->notification(
