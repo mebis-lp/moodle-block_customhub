@@ -122,11 +122,17 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //create visit link html
                 $visitlinkhtml = "";
                 if (empty($course->enrollable)) {
-                    $courseurl = new moodle_url($course->demourl);
+                    $courseurl = new moodle_url($course->courseurl);
                     $linktext = get_string('visitdemo', 'block_customhub');
-                    $visitlinkhtml = html_writer::tag('a', $linktext,
-                                    array('href' => $courseurl, 'class' => 'hubcoursedownload',
-                                        'onclick' => 'this.target="_blank"'));
+                    $visitlinkhtml = html_writer::tag(
+                        'a',
+                        $linktext,
+                        [
+                            'href' => $courseurl,
+                            'class' => 'hubcoursedownload',
+                            'onclick' => 'this.target="_blank"'
+                        ]
+                    );
                 }
 
 
