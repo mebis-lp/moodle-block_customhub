@@ -274,7 +274,7 @@ class block_customhub_renderer extends plugin_renderer_base {
                         'sesskey' => sesskey(),
                         'add' => 1,
                         'confirmed' => 1,
-                        'courseid' => $contextcourseid,
+                        // 'courseid' => $contextcourseid,
                         // 'coursefullname' => $course->fullname,
                         // 'courseurl' => $courseurl,
                         // 'coursedescription' => $course->description,
@@ -295,10 +295,16 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //create download button html
                 $downloadbuttonhtml = "";
                 if (!$course->enrollable) {
-                    $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
-                        'remotemoodleurl' => $CFG->wwwroot, 'courseid' => $contextcourseid,
-                        'downloadcourseid' => $course->id, 'huburl' => $huburl,
-                'coursefullname' => $course->fullname/*, 'backupsize' => $course->backupsize*/);
+                    $params = [
+                        'sesskey' => sesskey(),
+                        'download' => 1,
+                        'confirmed' => 1,
+                        'remotemoodleurl' => $CFG->wwwroot,
+                        // 'courseid' => $contextcourseid,
+                        'downloadcourseid' => $course->id,
+                        'huburl' => $huburl,
+                        'coursefullname' => $course->fullname/*, 'backupsize' => $course->backupsize*/
+                    ];
                     $downloadurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
                     $downloadbuttonhtml = html_writer::tag('a', get_string('install', 'block_customhub'),
                                     array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));

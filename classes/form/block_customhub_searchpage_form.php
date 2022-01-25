@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/blocks/customhub/hublisting.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  */
-class block_customhub_enrol_to_course_form extends \moodleform {
+class block_customhub_searchpage_form extends \moodleform {
 
     /**
      * Definiton of customhub_search_form.
@@ -100,7 +100,7 @@ class block_customhub_enrol_to_course_form extends \moodleform {
         $mform->addElement('header', 'site', get_string('search', 'block_customhub'));
 
         //add the course id (of the context)
-        $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
+        // $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
         $mform->setType('courseid', PARAM_INT);
         $mform->addElement('hidden', 'executesearch', 1);
         $mform->setType('executesearch', PARAM_INT);
@@ -190,10 +190,10 @@ class block_customhub_enrol_to_course_form extends \moodleform {
             $mform->setType('huburl', PARAM_URL);
 
             //display enrol/download select box if the USER has the download capability on the course
-            if (has_capability(
-                'block/customhub:downloadcommunity',
-                \context_course::instance($this->_customdata['courseid'])
-            )) {
+            // if (has_capability(
+            //     'block/customhub:downloadcommunity',
+            //     \context_course::instance($this->_customdata['courseid'])
+            // )) {
                 $options = array(
                     0 => get_string('enrollable', 'block_customhub'),
                     1 => get_string('downloadable', 'block_customhub')
@@ -207,9 +207,9 @@ class block_customhub_enrol_to_course_form extends \moodleform {
                 $mform->addHelpButton('downloadable', 'enroldownload', 'block_customhub');
 
                 $mform->setDefault('downloadable', $downloadable);
-            } else {
-                $mform->addElement('hidden', 'downloadable', 0);
-            }
+            // } else {
+            //     $mform->addElement('hidden', 'downloadable', 0);
+            // }
             $mform->setType('downloadable', PARAM_INT);
 
             $options = [];

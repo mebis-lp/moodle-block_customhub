@@ -119,3 +119,4 @@ $string['cannotsearchcommunity'] = 'Sorry, you don\'t have the right permissions
 $string['xmlrpcdisabledcommunity'] = 'The XML-RPC extension is not enabled on the server. You can not search and download courses.';
 $string['nohubselected'] = 'No hub selected';
 $string['communityremoved'] = 'That course link has been removed from your list';
+$string['restorestarted'] = 'The course will be created in the background.';

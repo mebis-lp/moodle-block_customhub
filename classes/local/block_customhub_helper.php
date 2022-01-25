@@ -64,6 +64,8 @@ class block_customhub_helper {
      */
     public function create_collaboration_course($coursedata) {
         global $DB;
+
+        $this->check_cartridgexml($coursedata);
         $ccat = $this->create_collaboration_course_category();
         $course = $this->create_course($ccat, $coursedata);
         $enrolinstance = $this->create_enrolment($course, 'manual');
@@ -227,5 +229,129 @@ class block_customhub_helper {
 
         // print_r($record);die;
         $modgenerator->create_instance($record);
+    }
+
+    private function check_cartridgexml($coursedata) {
+
+        $curlurl = $coursedata->courseurl;
+
+        //send an identification token if the site is registered on the hub
+        $registrationmanager = new \tool_customhub\registration_manager();
+        $registeredhub = $registrationmanager->get_registeredhub($coursedata->huburl, true);
+        if (!empty($registeredhub)) {
+            $token = $registeredhub->token;
+            $curlurl .= '&token=' . $token;
+        }
+
+        $ch = curl_init($curlurl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $data = curl_exec($ch);
+
+        if (empty($data)) {
+            throw new \moodle_exception('Cartrige URL is not readable. Is the LTI Authentication active?');
+        }
+
+        if(strpos($data, 'pluginnotenabled')) {
+            throw new \moodle_exception('The LTI Authentication method is not active. Please contact the administrator.');
+        }
+
+        if (strpos($data, 'enrolisdisabled')) {
+            throw new \moodle_exception('The LTI Enrolment method is not active. Please contact the administrator.');
+        }
+
+        curl_close($ch);
+    }
+
+    /**
+     * Start an asynchronous restore of the given backup file to the given targetcategory.
+     *
+     * @param \stored_file $file file to restore
+     * @param int $targetcat id of the target category the course backup file should be restored to
+     * @throws \backup_helper_exception if backupfile is damaged/corrupt
+     * @throws \moodle_exception if input parameters aren't valid or general error occurs
+     * @throws \restore_controller_exception if restore process fails
+     */
+    public static function start_async_restore(\stored_file $file, int $targetcat = 0) {
+        global $CFG, $USER, $DB;
+        if (!$file) {
+            throw new \moodle_exception('No file object given. Restore process aborted.');
+        }
+
+        if (!$targetcat || $targetcat == 0) {
+            throw new \moodle_exception('No valid target category for restore process given. Aborting.');
+        }
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        // Extraction mostly copied from \backup_general_helper::get_backup_information_from_mbz().
+        $tmpname = 'mbsnewcourserestore_' . pathinfo($file->get_filename())['basename'] . '_' . time();
+        $tmpdir = $CFG->tempdir . '/backup/' . $tmpname;
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $extracted = $fp->extract_to_pathname($file, $tmpdir);
+        @unlink($file);
+        $moodlefile = $tmpdir . '/' . 'moodle_backup.xml';
+        if (!$extracted || !is_readable($moodlefile)) {
+            throw new \backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
+        }
+
+        $info = \backup_general_helper::get_backup_information($tmpname);
+        list($fullname, $shortname) =
+            \restore_dbops::calculate_course_names(0, $info->original_course_fullname, $info->original_course_shortname);
+        $cdata = (object) [
+            'category' => $targetcat,
+            'shortname' => $shortname,
+            'fullname' => $info->original_course_fullname . get_string('restoring', 'block_mbsnewcourse'),
+            'visible' => 1,
+            'newsitems' => 0, // Prevent creation of a new forum when course_created event is fired.
+        ];
+        $course = create_course($cdata);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        // ...add enrol instances.
+        if (!$DB->record_exists('enrol', array('courseid' => $course->id, 'enrol' => 'manual'))) {
+            if ($manual = enrol_get_plugin('manual')) {
+                $manual->add_default_instance($course);
+            }
+        }
+        enrol_try_internal_enrol($course->id, $USER->id, $teacherrole->id);
+        $coursecontext = \context_course::instance($course->id);
+
+        if (!has_capability('moodle/restore:restorecourse', $coursecontext)) {
+            throw new \moodle_exception('nopermissions');
+        }
+
+        $rc = new \restore_controller(
+            $tmpname,
+            $course->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_ASYNC,
+            $USER->id,
+            \backup::TARGET_NEW_COURSE
+        );
+        if (!$rc->execute_precheck()) {
+            if (is_array($rc->get_precheck_results()) && !empty($rc->get_precheck_results()['errors'])) {
+                delete_course($course->id);
+                throw new \moodle_exception('cannotrestore', '', '', null, $rc->get_precheck_results()['errors']);
+            }
+        }
+        $restoreid = $rc->get_restoreid();
+
+        $asynctask = new \core\task\asynchronous_restore_task();
+        $asynctask->set_blocking(false);
+        $asynctask->set_custom_data(['backupid' => $restoreid]);
+        \core\task\manager::queue_adhoc_task($asynctask);
+    }
+
+    /**
+     * Create a Demo Course Category if necessary.
+     * @return $object course_category record
+     */
+    public static function get_users_course_category() {
+        global $DB, $USER;
+        if (!empty($USER->mbs_schoolcat->id)) {
+            return $DB->get_record('course_categories', ['id' => $USER->mbs_schoolcat->id]);
+        }
+        return $DB->get_record('course_categories', ['name' => 'Miscellaneous']);
     }
 }
