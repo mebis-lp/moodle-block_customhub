@@ -140,7 +140,7 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
     // echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);
     $url = new moodle_url('/blocks/mbsnewcourse/restore.php');
     redirect($url, 'Automatic redirect to course restore', 2);
-    
+
     echo $OUTPUT->footer();
     die();
 }
@@ -166,7 +166,7 @@ $hubselectorform->set_data($fromformdata);
 // Retrieve courses by web service
 $courses = null;
 if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
-    $downloadable = optional_param('downloadable', false, PARAM_INT);
+    $downloadable = optional_param('downloadable', 2, PARAM_INT);
 
     $options = new stdClass();
     if (!empty($fromformdata['coverage'])) {
@@ -196,10 +196,17 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     $token = 'publichub';
 
     $function = 'hub_get_courses';
+
+    $enrollable = intval(!$downloadable);
+    if ($downloadable == 2) {
+        $enrollable = 1;
+        $downloadable = 1;
+    }
+
     $params = [
         'search' => $search,
         'downloadable' => $downloadable,
-        'enrollable' => intval(!$downloadable),
+        'enrollable' => $enrollable,
         'options' => $options
     ];
     $serverurl = $registeredhub->huburl . "/local/hub/webservice/webservices.php";
@@ -217,7 +224,6 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
         );
     }
 }
-
 
 // OUTPUT
 echo $OUTPUT->header();
@@ -294,8 +300,8 @@ if (!empty($courses)) {
             ];
             $downloadurl = new moodle_url("/blocks/customhub/communitysearch.php", $params);
             $coursecard->installurl = $downloadurl;
-        } 
-        
+        }
+
         if ($enrolable) {
             $params = [
                 'sesskey' => sesskey(),
@@ -310,7 +316,7 @@ if (!empty($courses)) {
 
         // Collect screenshots.
         $screenshothtml = '';
-        if (empty($course->screenshots)){
+        if (empty($course->screenshots)) {
             $dummyurl = "https://mbsmoodle.localhost/theme/image.php/mebis/theme_boost_campus/1643043364/mebis_diamond_reverse";
             $screenshothtml = html_writer::empty_tag(
                 'img',
@@ -347,9 +353,55 @@ if (!empty($courses)) {
         );
         $coursecard->screenshot = $screenshothtml;
 
+        $blocksandactivities = "";
+        //Create course content html
+        $blocks = core_component::get_plugin_list('block');
+        $activities = core_component::get_plugin_list('mod');
+        $activitiesarr = [];
+        $blocksarr = [];
+        foreach ($course->contents as $content) {
+            $content = (object) $content;
+            if ($content->moduletype == 'block') {
+                if (!empty($blockhtml)) {
+                    $blockhtml .= ' - ';
+                }
+                if (array_key_exists($content->modulename, $blocks)) {
+                    $blockname = get_string('pluginname', 'block_' . $content->modulename);
+                } else {
+                    $blockname = $content->modulename;
+                }
+                $blocksarr[] .= $blockname . " (" . $content->contentcount . "x)";
+            } else {
+                if (!empty($activitieshtml)) {
+                    $activitieshtml .= ' - ';
+                }
+                if (array_key_exists($content->modulename, $activities)) {
+                    $activityname = get_string('modulename', $content->modulename);
+                } else {
+                    $activityname = $content->modulename;
+                }
+                $activitiesarr[] = $activityname . " (" . $content->contentcount . "x)";
+            }
+        }
+        $activitieshtml = "";
+        if ($activitiesarr) {
+            $activitieshtml = "<ul><li>" . join('</li><li>', $activitiesarr) . "</li></ul>";
+        }
+        $blockshtml = "";
+        if ($blocksarr) {
+            $blockshtml = "<ul><li>" . join('</li><li>', $blocksarr) . "</li></ul>";
+        }
+        $coursecard->hubcourseid = $course->id;
+        $coursecard->activities = $activitieshtml;
+        $coursecard->blocks = $blockshtml;
+
         $coursecards[] = $renderer->render_from_template('block_customhub/coursecard', $coursecard);
     }
-    $coursecards = join('', $coursecards);
+    if ($coursecards) {
+        $coursecards = join('', $coursecards);
+    } else {
+        $coursecards = "";
+    }
     $coursecardlist = new stdClass();
     $coursecardlist->coursecards = $coursecards;
 

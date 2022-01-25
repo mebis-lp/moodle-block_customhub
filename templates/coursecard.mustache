@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-<div class="container card">
+<div class="card dashboard-card" style="overflow:hidden">
     <div class="row">
         <div class="card-meta col-12 row collapsed">
             <div class="col-2 card-type">
@@ -32,8 +32,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-img dashboard-card-img"
-            style="background-image: url(&quot;https://mbsmoodle2.localhost/theme/image.php/mebis/theme_boost_campus/1643043364/mebis_hat&quot;); height:200px;
+        <div class="card-img dashboard-card-img" style="background-image: url(&quot;https://mbsmoodle2.localhost/theme/image.php/mebis/theme_boost_campus/1643043364/mebis_hat&quot;); height:200px;
             background-repeat:no-repeat;background-size:cover;background-position: center;">
             <span class="sr-only">Course image</span>
         </div>
@@ -43,21 +42,41 @@
         <div class="card-body col-12">
             <div class="courseoperations">
                 {{#installurl}}
-                <a class="btn btn-primary" href="{{{installurl}}}" class="centeredbutton, hubcoursedownload">{{#str}}install, block_customhub{{/str}}</a>
-                <a class="btn btn-primary" href="{{{courseurl}}}" class="hubcoursedownload" onclick="this.target='_blank'">{{#str}}visitdemo, block_customhub{{/str}}</a>
+                <a class="btn btn-primary btn-block" href="{{{courseurl}}}" onclick="this.target='_blank'">{{#str}}visitdemo, block_customhub{{/str}}</a>
+                <a class="btn btn-primary btn-block" href="{{{installurl}}}">{{#str}}install, block_customhub{{/str}}</a>
                 {{/installurl}}
                 {{#enrolurl}}
-                <a class="btn btn-primary" href="{{{enrolurl}}}" class="hubcoursedownload">{{#str}}addtocommunityblock, block_customhub{{/str}}</a>
+                <a class="btn btn-primary btn-block" href="{{{enrolurl}}}" style="margin-bottom: 3em;">{{#str}}addtocommunityblock, block_customhub{{/str}}</a>
                 {{/enrolurl}}
             </div>
             <div class="text-muted muted d-flex mb-1 flex-wrap">{{creatorname}}</div>
             <h4 class="hubcoursetitle">{{fullname}}</h4>
-            <div class="hubcoursedescription">{{description}}</div>
+            <a class="btn btn-secondary btn-block" data-toggle="collapse" href="#description{{hubcourseid}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                {{#str}}description{{/str}}
+            </a>
+            <div class="hubcoursedescription collapse" id="description{{hubcourseid}}">{{description}}</div>
             <div class="hubcoursecontentinfo">{{subject}}</div>
-
             {{#activities}}
-            <div>{{activities}}</div>
+            <a class="btn btn-secondary btn-block" data-toggle="collapse" href="#activitiescollaps{{hubcourseid}}" role="button" aria-expanded="false"
+                aria-controls="collapseExample">
+                {{#str}}activities{{/str}}
+            </a>
+            <div class="collapse" id="activitiescollaps{{hubcourseid}}">
+                <div class="">
+                    {{{activities}}}
+                </div>
+            </div>
             {{/activities}}
+            {{#blocks}}
+            <a class="btn btn-secondary btn-block" data-toggle="collapse" href="#blockscollaps{{hubcourseid}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                {{#str}}blocks{{/str}}
+            </a>
+            <div class="collapse" id="blockscollaps{{hubcourseid}}">
+                <div class="">
+                    {{{blocks}}}
+                </div>
+            </div>
+            {{/blocks}}
         </div>
     </div>
 </div>

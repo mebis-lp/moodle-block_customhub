@@ -14,14 +14,15 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-
-<div id="resultItems" class="card-deck " data-region="card-deck" role="list">
-    {{#coursecards}}
+<div class="card-deck dashboard-card-deck" style="width:100%">
+    <div id="resultItems" style="width:100%" class="row" data-region="card-deck" role="list">
+        {{#coursecards}}
         {{{coursecards}}}
-    {{/coursecards}}
-    {{^coursecards}}
+        {{/coursecards}}
+        {{^coursecards}}
         <div style="width: 100%; text-align: center;">
-            {{text_nothingfound}}
+            {{#str}}noresults, block_customhub{{/str}}
         </div>
-    {{/coursecards}}
+        {{/coursecards}}
+    </div>
 </div>

@@ -120,3 +120,4 @@ $string['xmlrpcdisabledcommunity'] = 'The XML-RPC extension is not enabled on th
 $string['nohubselected'] = 'No hub selected';
 $string['communityremoved'] = 'That course link has been removed from your list';
 $string['restorestarted'] = 'The course will be created in the background.';
+$string['noresults'] = 'No Results found';

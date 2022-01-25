@@ -120,3 +120,4 @@ $string['visitdemo'] = 'Demo-Seite besuchen';
 // $string['nohubselected'] = 'Kein Hub ausgewählt';
 // $string['communityremoved'] = 'Dieser Kurslink wurde aus Ihrer Liste entfernt';
 $string['restorestarted'] = 'Der Kurs wird im Hintergrund erstellt.';
+$string['noresults'] = 'Keine Kurse gefunden';

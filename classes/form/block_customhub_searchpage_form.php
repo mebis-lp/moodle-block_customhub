@@ -195,6 +195,7 @@ class block_customhub_searchpage_form extends \moodleform {
             //     \context_course::instance($this->_customdata['courseid'])
             // )) {
                 $options = array(
+                    2 => get_string('all'),
                     0 => get_string('enrollable', 'block_customhub'),
                     1 => get_string('downloadable', 'block_customhub')
                 );
