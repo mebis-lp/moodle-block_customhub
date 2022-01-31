@@ -42,9 +42,9 @@ require_login();
 $contextsystem = context_system::instance();
 $PAGE->set_url('/blocks/customhub/communitysearch.php');
 $PAGE->set_context($contextsystem);
-$PAGE->set_heading($SITE->fullname);
-$PAGE->set_title(get_string('searchcourse', 'block_customhub'));
-$PAGE->navbar->add(get_string('searchcourse', 'block_customhub'));
+$PAGE->set_heading(get_string('searchcommunitycourse', 'block_customhub'));
+$PAGE->set_title(get_string('searchcommunitycourse', 'block_customhub'));
+$PAGE->navbar->add(get_string('searchcommunitycourse', 'block_customhub'));
 
 $search = optional_param('search', null, PARAM_TEXT);
 
@@ -155,13 +155,21 @@ $fromformdata['subject'] = optional_param('subject', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['audience'] = optional_param('audience', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['language'] = optional_param('language', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['educationallevel'] = optional_param('educationallevel', 'all', PARAM_ALPHANUMEXT);
-$fromformdata['downloadable'] = optional_param('downloadable', $usercandownload, PARAM_ALPHANUM);
 $fromformdata['orderby'] = optional_param('orderby', 'newest', PARAM_ALPHA);
 $fromformdata['huburl'] = optional_param('huburl', $registeredhub->huburl /*HUB_MOODLEORGHUBURL*/, PARAM_URL);
 $fromformdata['search'] = $search;
+$fromformdata['publishtype'] = optional_param('publishtype', 0, PARAM_INT);
 // $fromformdata['courseid'] = $courseid;
 $hubselectorform = new \block_customhub\form\block_customhub_searchpage_form('', $fromformdata);
 $hubselectorform->set_data($fromformdata);
+
+// Receive form info from hub server.
+$params = [];
+$function = 'hub_get_forminfo';
+$serverurl = $registeredhub->huburl . "/local/hub/webservice/webservices.php";
+require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
+$xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
+$forminfo = $xmlrpcclient->call($function, array_values($params));
 
 // Retrieve courses by web service
 $courses = null;
@@ -189,6 +197,7 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     }
 
     $options->orderby = $fromformdata['orderby'];
+    $options->publishtype = $fromformdata['publishtype'];
 
     //the range of course requested
     $options->givememore = optional_param('givememore', 0, PARAM_INT);
@@ -205,10 +214,39 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
 
     $params = [
         'search' => $search,
-        'downloadable' => $downloadable,
-        'enrollable' => $enrollable,
+        // 'downloadable' => $downloadable,
+        // 'enrollable' => $enrollable,
         'options' => $options
     ];
+    // \local_hub\debug\local_hub_debug::write_to_file($params);
+    $serverurl = $registeredhub->huburl . "/local/hub/webservice/webservices.php";
+    require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
+    $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
+    try {
+        $result = $xmlrpcclient->call($function, array_values($params));
+        $courses = $result['courses'];
+        $SESSION->hubcourselist = $customhubhelper->set_courseregid_as_key($courses);
+        $coursetotal = $result['coursetotal'];
+    } catch (Exception $e) {
+        $errormessage = $OUTPUT->notification(
+            get_string('errorcourselisting', 'block_customhub', $e->getMessage())
+        );
+    }
+    // var_dump($courses);die;
+} else {
+    // Get preview courses.
+    $options = new stdClass();
+    $options->orderby = $fromformdata['orderby'];
+    $options->defaultlimit = $forminfo['defaultsearchlimit'];
+    $options->publishtype = optional_param('publishtype', 2, PARAM_INT);
+    
+    $params = [
+        'search' => $search,
+        'options' => $options
+    ];
+    // \local_hub\debug\local_hub_debug::write_to_file($params);
+
+    $function = 'hub_get_courses';
     $serverurl = $registeredhub->huburl . "/local/hub/webservice/webservices.php";
 
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
@@ -224,11 +262,69 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
         );
     }
 }
+// var_dump($forminfo);die();
 
+// Prepare formdata.
+$defaultoption['id']="";
+$defaultoption['text']=get_string('pleaseselect', 'block_customhub');
+array_unshift($forminfo['tagtypes']['subject'], $defaultoption);
+array_unshift($forminfo['tagtypes']['schoolyear'], $defaultoption);
+// print_r($forminfo['tagtypes']['subject']);die;
+$formdata['subject'] = $forminfo['tagtypes']['subject'];
+$formdata['schoolyear'] = $forminfo['tagtypes']['schoolyear'];
+$formdata['author'] = $forminfo['tagtypes']['author'];
+$formdata['tags'] = $forminfo['tagtypes']['tag'];
+$formdata['sort'] = $forminfo['searchoptions'];
+$formdata['publishtype'] = $forminfo['searchforoptions'];
+
+// Mark elements as selected.
+$formdata['text_defaultsearch'] = get_string('defaultsearch', 'block_customhub');
+if ((optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) || optional_param('a', 0, PARAM_INT) == 1) {
+    foreach ($forminfo['searchoptions'] as $searchoption) {
+        foreach ($formdata['sort'] as &$sort) {
+            if ($fromformdata['orderby'] == $sort['value']) {
+                $sort['selected'] = true;
+                $formdata['text_defaultsearch'] = $sort['text'];
+                break;
+            }
+        }
+    }
+
+    $formdata['search'] = $fromformdata['search'];
+
+    foreach ($forminfo['searchforoptions'] as $searchforoption) {
+        foreach ($formdata['publishtype'] as &$publishtype) {
+            if (
+                $fromformdata['publishtype'] == $publishtype['value']
+                || optional_param('publishtype', 2, PARAM_INT) == $publishtype['value']
+            ) {
+                $publishtype['selected'] = true;
+                break;
+            }
+        }
+    }
+}
+// print_r($formdata['sort']);
+// print_r($formdata['publishtype']);die;
 // OUTPUT
+// print_r($OUTPUT);die;
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_customhub'), 3, 'main');
-$hubselectorform->display();
+
+
+// Get output texts.
+$formdata['text_search']          = get_string('search', 'block_customhub');
+$formdata['text_advanced_search'] = get_string('advancedsearch', 'block_customhub');
+$formdata['text_searchresults']   = get_string('searchresults', 'block_customhub');
+$formdata['text_entercourse']     = get_string('entercourse', 'block_customhub');
+$formdata['text_coursecopy']      = get_string('coursecopy', 'block_customhub');
+$formdata['text_report']          = get_string('report', 'block_customhub');
+$formdata['text_nothingfound']    = get_string('nothingfound', 'block_customhub');
+$formdata['text_loadmore']        = get_string('loadmore', 'block_customhub');
+$formdata['sesskey']              = sesskey();
+echo $OUTPUT->render_from_template('block_customhub/search_template', $formdata);
+
+// $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
 }
@@ -246,22 +342,22 @@ if (!empty($courses)) {
         $courseimagenumbers[] = $course['screenshots'];
     }
 }
-$PAGE->requires->yui_module(
-    'moodle-block_customhub-comments',
-    'M.blocks_customhub.init_comments',
-    [[
-        'commentids' => $commentedcourseids,
-        'closeButtonTitle' => get_string('close', 'editor')
-    ]]
-);
-$PAGE->requires->yui_module(
-    'moodle-block_customhub-imagegallery',
-    'M.blocks_customhub.init_imagegallery',
-    [[
-        'imageids' => $courseids, 'imagenumbers' => $courseimagenumbers,
-        'huburl' => $registeredhub->huburl, 'closeButtonTitle' => get_string('close', 'editor')
-    ]]
-);
+// $PAGE->requires->yui_module(
+//     'moodle-block_customhub-comments',
+//     'M.blocks_customhub.init_comments',
+//     [[
+//         'commentids' => $commentedcourseids,
+//         'closeButtonTitle' => get_string('close', 'editor')
+//     ]]
+// );
+// $PAGE->requires->yui_module(
+//     'moodle-block_customhub-imagegallery',
+//     'M.blocks_customhub.init_imagegallery',
+//     [[
+//         'imageids' => $courseids, 'imagenumbers' => $courseimagenumbers,
+//         'huburl' => $registeredhub->huburl, 'closeButtonTitle' => get_string('close', 'editor')
+//     ]]
+// );
 
 if (!empty($courses)) {
 
@@ -417,5 +513,6 @@ if (!empty($courses)) {
         echo $renderer->next_button($fromformdata);
     }
 }
+
 
 echo $OUTPUT->footer();

@@ -121,3 +121,20 @@ $string['nohubselected'] = 'No hub selected';
 $string['communityremoved'] = 'That course link has been removed from your list';
 $string['restorestarted'] = 'The course will be created in the background.';
 $string['noresults'] = 'No Results found';
+
+// Search Form.
+$string['advancedsearch'] = 'Advanced search';
+$string['search'] = 'search';
+$string['searchresults'] = 'Search results';
+$string['defaultsearch'] = 'Best rated';
+$string['search_placeholder'] = 'Search keyword / course / author / subject';
+
+// Search Results.
+$string['entercourse'] = 'Enter course';
+$string['coursecopy'] = 'Copy course';
+$string['report'] = 'report problem';
+$string['nothingfound'] = 'No courses found.';
+$string['loadmore'] = 'Load more results';
+
+$string['pleaseselect'] = 'Please select';
+$string['search_enrollable_courses'] = 'Search for enrollable courses';

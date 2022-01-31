@@ -210,8 +210,12 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     }
 
     $function = 'hub_get_courses';
-    $params = array('search' => $search, 'downloadable' => $downloadable,
-        'enrollable' => intval(!$downloadable), 'options' => $options);
+    $params = [
+        'search' => $search,
+        'downloadable' => $downloadable,
+        'enrollable' => intval(!$downloadable),
+        'options' => $options
+    ];
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
 
     

@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Strings for component 'block_customhub', language 'en', branch 'MOODLE_20_STABLE'
@@ -50,7 +50,7 @@ $string['addtocommunityblock'] = 'Jetzt einschreiben';
 // $string['donotrestore'] = 'Nein';
 // $string['dorestore'] = 'Ja';
 // $string['download'] = 'Herunterladen';
-$string['downloadable'] = 'Kurse, die ich herunterladen kann';
+// $string['downloadable'] = 'Kurse, die ich herunterladen kann';
 // $string['downloadablecourses'] = 'Herunterladbare Kurse';
 // $string['customhub:downloadcommunity'] = 'Möglichkeit zum Herunterladen von Kursen';
 // $string['downloadconfirmed'] = 'Die Sicherung wurde in Ihren privaten Dateien {$a} gespeichert';
@@ -64,7 +64,7 @@ $string['downloadable'] = 'Kurse, die ich herunterladen kann';
 // $string['enroldownload_help'] = 'Einige Kurse, die im ausgewählten Hub aufgelistet sind, werden beworben, damit die Leute kommen und an ihnen auf der Originalseite teilnehmen können.
 
 // Andere sind Kursvorlagen, die Sie herunterladen und auf Ihrer eigenen Moodle-Site verwenden können.';
-$string['enrollable'] = 'Kurse, in die ich mich einschreiben kann';
+// $string['enrollable'] = 'Kurse, in die ich mich einschreiben kann';
 // $string['enrollablecourses'] = 'Einschreibbare Kurse';
 // $string['errorcourselisting'] = 'Beim Abrufen der Kursliste vom ausgewählten Hub ist ein Fehler aufgetreten, bitte versuchen Sie es später erneut. ({$a})';
 // $string['errorhublisting'] = 'Beim Abrufen der Kursliste von Moodle.org ist ein Fehler aufgetreten, bitte versuchen Sie es später noch einmal. ({$a})';
@@ -104,7 +104,7 @@ $string['install'] = 'Kurs kopieren';
 // $string['restorecourseinfo'] = 'Den Kurs wiederherstellen?';
 // $string['screenshots'] = 'Screenshots';
 // $string['search'] = 'Suchen';
-// $string['searchcommunitycourse'] = 'Suche nach Community-Kurs';
+$string['searchcommunitycourse'] = 'teachSHARE durchsuchen';
 // $string['searchcourse'] = 'Suche nach Community-Kurs';
 // $string['selecthub'] = 'Hub auswählen';
 // $string['selecthub_help'] = 'Wählen Sie den Hub aus, in dem die Kurse gesucht werden sollen.';
@@ -121,3 +121,21 @@ $string['visitdemo'] = 'Demo-Seite besuchen';
 // $string['communityremoved'] = 'Dieser Kurslink wurde aus Ihrer Liste entfernt';
 $string['restorestarted'] = 'Der Kurs wird im Hintergrund erstellt.';
 $string['noresults'] = 'Keine Kurse gefunden';
+
+// Search Form.
+$string['advancedsearch'] = 'Erweiterte Suche';
+$string['search'] = 'Suchen';
+$string['searchresults'] = 'Suchergebnisse';
+$string['defaultsearch'] = 'Am besten bewertet';
+$string['search_placeholder'] = 'Schlagwort / Kurs / Autor / Fach suchen';
+
+// Search Results.
+$string['entercourse'] = 'Kurs betreten';
+$string['coursecopy'] = 'Kurs kopieren';
+$string['report'] = 'Problem melden';
+$string['nothingfound'] = 'Keine Kurse gefunden.';
+$string['loadmore'] = 'Weitere Ergebnisse laden';
+$string['recomodations'] = 'Empfehlungen';
+
+$string['pleaseselect'] = 'Bitte auswählen';
+$string['search_enrollable_courses'] = 'Kurse zur Einschribung suchen';
