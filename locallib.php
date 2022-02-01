@@ -25,6 +25,8 @@
  *
  */
 
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/customhub/constants.php');
+
 class block_customhub_manager {
 
     /**
@@ -75,15 +77,15 @@ class block_customhub_manager {
 
     /**
      * Download the community course backup and save it in file API
-     * @param integer $courseid
-     * @param string $huburl
+     * @param object $course
+     * @param int $reqsource
      * @return array 'privatefile' the file name saved in private area
      *               'tmpfile' the file name saved in the moodledata temp dir (for restore)
      */
-    public function block_customhub_download_course_backup($course) {
+    public function block_customhub_download_course_backup($course, $reqsource = 0) {
         global $CFG, $USER;
         require_once($CFG->libdir . "/filelib.php");
-        require_once($CFG->dirroot. "/course/publish/lib.php");
+        // require_once($CFG->dirroot. "/course/publish/lib.php");
 
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;
@@ -109,6 +111,7 @@ class block_customhub_manager {
         $ch = curl_init($curlurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
+
         curl_close($ch);
         fclose($fp);
 
@@ -116,17 +119,23 @@ class block_customhub_manager {
         $record = new stdClass();
         $record->contextid = context_user::instance($USER->id)->id;
         $record->component = 'user';
-        $record->filearea = 'private';
-        $record->itemid = 0;
         $record->filename = urlencode($course->fullname)."_".time().".mbz";
-        $record->filepath = '/downloaded_backup/';
-        if (!$fs->file_exists($record->contextid, $record->component,
-                $record->filearea, 0, $record->filepath, $record->filename)) {
-            $fs->create_file_from_pathname($record,
-                    $CFG->tempdir.'/backup/'.$filename.".mbz");
+        $record->filearea = 'backup';
+        $record->filepath = '/';
+        $record->itemid = 0;
+        if ($reqsource == 0) { 
+            // If the request comes from course context
+            $record->filearea = 'private';
+            $record->filepath = '/downloaded_backup/';
         }
 
-        $filenames = array();
+        // Normally the file does not exits.
+        if (!$fs->file_exists($record->contextid, $record->component, $record->filearea, 0, $record->filepath, $record->filename)) {
+            $storedfile = $fs->create_file_from_pathname($record, $CFG->tempdir.'/backup/'.$filename.".mbz");
+        }
+
+        $filenames = [];
+        $filenames['storedfile'] = $storedfile;
         $filenames['privatefile'] = $record->filename;
         $filenames['tmpfile'] = $filename;
         return $filenames;

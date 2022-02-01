@@ -30,18 +30,31 @@
 class block_customhub_renderer extends plugin_renderer_base {
 
     public function restore_confirmation_box($filename, $context) {
-        $restoreurl = new moodle_url('/backup/restore.php',
-                        array('filename' => $filename . ".mbz", 'contextid' => $context->id));
-        $searchurl = new moodle_url('/blocks/customhub/communitycourse.php',
-                        array('add' => 1, 'courseid' => $context->instanceid,
-                            'cancelrestore' => 1, 'sesskey' => sesskey(),
-                            'filename' => $filename));
-        $formrestore = new single_button($restoreurl,
-                        get_string('dorestore', 'block_customhub'));
-        $formsearch = new single_button($searchurl,
-                        get_string('donotrestore', 'block_customhub'));
-        return $this->output->confirm(get_string('restorecourseinfo', 'block_customhub'),
-                $formrestore, $formsearch);
+        $restoreurl = new moodle_url(
+            '/backup/restore.php',
+            ['filename' => $filename . ".mbz", 'contextid' => $context->id]
+        );
+        $searchurl = new moodle_url(
+            '/blocks/customhub/communitycourse.php',
+            [
+                'add' => 1, 'courseid' => $context->instanceid,
+                'cancelrestore' => 1, 'sesskey' => sesskey(),
+                'filename' => $filename
+            ]
+        );
+        $formrestore = new single_button(
+            $restoreurl,
+            get_string('dorestore', 'block_customhub')
+        );
+        $formsearch = new single_button(
+            $searchurl,
+            get_string('donotrestore', 'block_customhub')
+        );
+        return $this->output->confirm(
+            get_string('restorecourseinfo', 'block_customhub'),
+            $formrestore,
+            $formsearch
+        );
     }
 
     /**
@@ -64,15 +77,15 @@ class block_customhub_renderer extends plugin_renderer_base {
      * @param moodle_url $url the page to be redirected to
      * @return string html
      */
-    public function save_link_success(moodle_url $url) {
-        $html = $this->output->notification(get_string('addedtoblock', 'block_customhub'),
-                    'notifysuccess');
-        $continuebutton = new single_button($url,
-                        get_string('continue', 'block_customhub'));
-        $html .= html_writer::tag('div', $this->output->render($continuebutton),
-                array('class' => 'continuebutton'));
-        return $html;
-    }
+    // public function save_link_success(moodle_url $url) {
+    //     $html = $this->output->notification(get_string('addedtoblock', 'block_customhub'),
+    //                 'notifysuccess');
+    //     $continuebutton = new single_button($url,
+    //                     get_string('continue', 'block_customhub'));
+    //     $html .= html_writer::tag('div', $this->output->render($continuebutton),
+    //             array('class' => 'continuebutton'));
+    //     return $html;
+    // }
 
     /**
      * The 'Next'/'more course result' link for a courses search
@@ -106,19 +119,22 @@ class block_customhub_renderer extends plugin_renderer_base {
             foreach ($courses as $course) {
                 $course = (object) $course;
                 $courseiteration = $courseiteration + 1;
-
                 //create visit link html
-                if (!empty($course->courseurl)) {
+                $visitlinkhtml = "";
+                if (empty($course->enrollable)) {
                     $courseurl = new moodle_url($course->courseurl);
-                    $linktext = get_string('visitsite', 'block_customhub');
-                } else {
-                    $courseurl = new moodle_url($course->demourl);
                     $linktext = get_string('visitdemo', 'block_customhub');
+                    $visitlinkhtml = html_writer::tag(
+                        'a',
+                        $linktext,
+                        [
+                            'href' => $courseurl,
+                            'class' => 'hubcoursedownload',
+                            'onclick' => 'this.target="_blank"'
+                        ]
+                    );
                 }
 
-                $visitlinkhtml = html_writer::tag('a', $linktext,
-                                array('href' => $courseurl, 'class' => 'hubcoursedownload',
-                                    'onclick' => 'this.target="_blank"'));
 
                 //create title html
                 $coursename = html_writer::tag('h3', $course->fullname,
@@ -191,7 +207,7 @@ class block_customhub_renderer extends plugin_renderer_base {
                                 array('class' => 'hubcoursefileinfo'));
 
 
-
+                $blocksandactivities = "";
                 //Create course content html
                 $blocks = core_component::get_plugin_list('block');
                 $activities = core_component::get_plugin_list('mod');
@@ -254,23 +270,41 @@ class block_customhub_renderer extends plugin_renderer_base {
                 //Create add button html
                 $addbuttonhtml = "";
                 if ($course->enrollable) {
-                    $params = array('sesskey' => sesskey(), 'add' => 1, 'confirmed' => 1,
-                        'coursefullname' => $course->fullname, 'courseurl' => $courseurl,
-                        'coursedescription' => $course->description,
-                        'courseid' => $contextcourseid);
+                    $params = [
+                        'sesskey' => sesskey(),
+                        'add' => 1,
+                        'confirmed' => 1,
+                        // 'courseid' => $contextcourseid,
+                        // 'coursefullname' => $course->fullname,
+                        // 'courseurl' => $courseurl,
+                        // 'coursedescription' => $course->description,
+                        'crid' => $course->id,
+                    ];
+
                     $addurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
-                    $addbuttonhtml = html_writer::tag('a',
-                                    get_string('addtocommunityblock', 'block_customhub'),
-                                    array('href' => $addurl, 'class' => 'centeredbutton, hubcoursedownload'));
+                    $addbuttonhtml = html_writer::tag(
+                        'a',
+                        get_string('addtocommunityblock', 'block_customhub'),
+                        [
+                            'href' => $addurl,
+                            'class' => 'centeredbutton, hubcoursedownload'
+                        ]
+                    );
                 }
 
                 //create download button html
                 $downloadbuttonhtml = "";
                 if (!$course->enrollable) {
-                    $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
-                        'remotemoodleurl' => $CFG->wwwroot, 'courseid' => $contextcourseid,
-                        'downloadcourseid' => $course->id, 'huburl' => $huburl,
-                        'coursefullname' => $course->fullname, 'backupsize' => $course->backupsize);
+                    $params = [
+                        'sesskey' => sesskey(),
+                        'download' => 1,
+                        'confirmed' => 1,
+                        'remotemoodleurl' => $CFG->wwwroot,
+                        // 'courseid' => $contextcourseid,
+                        'downloadcourseid' => $course->id,
+                        'huburl' => $huburl,
+                        'coursefullname' => $course->fullname/*, 'backupsize' => $course->backupsize*/
+                    ];
                     $downloadurl = new moodle_url("/blocks/customhub/communitycourse.php", $params);
                     $downloadbuttonhtml = html_writer::tag('a', get_string('install', 'block_customhub'),
                                     array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));
@@ -301,51 +335,54 @@ class block_customhub_renderer extends plugin_renderer_base {
 
 
                 //Create comments html
-                $coursecomments = html_writer::tag('div', get_string('nocomments', 'block_customhub'),
-                                array('class' => 'nocomments'));
-                $commentcount = 0;
-                if (!empty($course->comments)) {
-                    //display only if there is some comment if there is some comment
-                    $commentcount = count($course->comments);
-                    $coursecomments = html_writer::tag('div',
-                                    get_string('comments', 'block_customhub', $commentcount),
-                                    array('class' => 'commenttitle'));
+                $coursecomments = "";
+                // $coursecomments = html_writer::tag('div', get_string('nocomments', 'block_customhub'),
+                //                 array('class' => 'nocomments'));
+                // $commentcount = 0;
+                // if (!empty($course->comments)) {
+                //     //display only if there is some comment if there is some comment
+                //     $commentcount = count($course->comments);
+                //     $coursecomments = html_writer::tag('div',
+                //                     get_string('comments', 'block_customhub', $commentcount),
+                //                     array('class' => 'commenttitle'));
 
-                    foreach ($course->comments as $comment) {
-                        $commentator = html_writer::tag('div',
-                                        $comment['commentator'],
-                                        array('class' => 'hubcommentator'));
-                        $commentdate = html_writer::tag('div',
-                                        ' - ' . userdate($comment['date'], '%e/%m/%y'),
-                                        array('class' => 'hubcommentdate clearfix'));
+                //     foreach ($course->comments as $comment) {
+                //         $commentator = html_writer::tag('div',
+                //                         $comment['commentator'],
+                //                         array('class' => 'hubcommentator'));
+                //         $commentdate = html_writer::tag('div',
+                //                         ' - ' . userdate($comment['date'], '%e/%m/%y'),
+                //                         array('class' => 'hubcommentdate clearfix'));
 
-                        $commenttext = html_writer::tag('div',
-                                        $comment['comment'],
-                                        array('class' => 'hubcommenttext'));
+                //         $commenttext = html_writer::tag('div',
+                //                         $comment['comment'],
+                //                         array('class' => 'hubcommenttext'));
 
-                        $coursecomments .= html_writer::tag('div',
-                                        $commentator . $commentdate . $commenttext,
-                                        array('class' => 'hubcomment'));
-                    }
-                    $coursecommenticon = html_writer::tag('div',
-                                    get_string('comments', 'block_customhub', $commentcount),
-                                    array('class' => 'hubcoursecomments',
-                                        'id' => 'comments-' . $course->id));
-                    $coursecomments = $coursecommenticon . html_writer::tag('div',
-                                    $coursecomments,
-                                    array('class' => 'yui3-overlay-loading',
-                                        'id' => 'commentoverlay-' . $course->id));
-                }
+                //         $coursecomments .= html_writer::tag('div',
+                //                         $commentator . $commentdate . $commenttext,
+                //                         array('class' => 'hubcomment'));
+                //     }
+                //     $coursecommenticon = html_writer::tag('div',
+                //                     get_string('comments', 'block_customhub', $commentcount),
+                //                     array('class' => 'hubcoursecomments',
+                //                         'id' => 'comments-' . $course->id));
+                //     $coursecomments = $coursecommenticon . html_writer::tag('div',
+                //                     $coursecomments,
+                //                     array('class' => 'yui3-overlay-loading',
+                //                         'id' => 'commentoverlay-' . $course->id));
+                // }
 
                 //link rate and comment
-                $rateandcomment = html_writer::tag('div',
-                                html_writer::tag('a', get_string('rateandcomment', 'block_customhub'),
-                                        array('href' => new moodle_url($huburl,
-                                                    array('courseid' => $course->id, 'mustbelogged' => true)),
-                                            'onclick' => 'this.target="_blank"')),
-                                array('class' => 'hubrateandcomment'));
+                $rateandcomment = "";
+                // $rateandcomment = html_writer::tag('div',
+                //                 html_writer::tag('a', get_string('rateandcomment', 'block_customhub'),
+                //                         array('href' => new moodle_url($huburl,
+                //                                     array('courseid' => $course->id, 'mustbelogged' => true)),
+                //                             'onclick' => 'this.target="_blank"')),
+                //                 array('class' => 'hubrateandcomment'));
 
                 //the main DIV tags
+
                 $buttonsdiv = html_writer::tag('div',
                                 $addbuttonhtml . $downloadbuttonhtml . $visitlinkhtml,
                                 array('class' => 'courseoperations'));

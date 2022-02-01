@@ -28,12 +28,26 @@
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  */
 
+// global $SESSION;
+
+// print_r($SESSION);die;
+
 require('../../config.php');
 require_once($CFG->dirroot . '/blocks/customhub/locallib.php');
-require_once($CFG->dirroot . '/blocks/customhub/forms.php');
+require_once($CFG->dirroot . '/blocks/customhub/classes/local/block_customhub_helper.php');
+// require_once($CFG->dirroot . '/blocks/customhub/forms.php');
+$customhubhelper = new \block_customhub\local\block_customhub_helper();
+
+$registrationmanager = new tool_customhub\registration_manager();
+$registeredhubs = $registrationmanager->get_registered_on_hubs();
+$registeredhub = array_shift($registeredhubs);
 
 require_login();
-$courseid = required_param('courseid', PARAM_INT); //if no courseid is given
+try {
+    $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
+} catch (Exception $e) {
+    redirect($CFG->wwwroot . '/my');
+}
 $parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $context = context_course::instance($courseid);
@@ -70,16 +84,19 @@ $renderer = $PAGE->get_renderer('block_customhub');
 $add = optional_param('add', -1, PARAM_INT);
 $confirm = optional_param('confirmed', false, PARAM_INT);
 if ($add != -1 and $confirm and confirm_sesskey()) {
-    $course = new stdClass();
-    $course->name = optional_param('coursefullname', '', PARAM_TEXT);
-    $course->description = optional_param('coursedescription', '', PARAM_TEXT);
-    $course->url = optional_param('courseurl', '', PARAM_URL);
-    $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
-    $customhubmanager->block_customhub_add_course($course, $USER->id);
-    echo $OUTPUT->header();
-    echo $renderer->save_link_success(
-            new moodle_url('/course/view.php', array('id' => $courseid)));
-    echo $OUTPUT->footer();
+    require_once($CFG->dirroot . "/blocks/customhub/classes/local/block_customhub_helper.php");
+    $courseregid = required_param('crid', PARAM_INT);
+
+    $helper = new \block_customhub\local\block_customhub_helper();
+    $collaborationcourse = $helper->create_collaboration_course($SESSION->hubcourselist[$courseregid]);
+
+    if(empty($collaborationcourse)) {
+        redirect($CFG->wwwroot . '/my');
+        die;
+    }
+
+    // After creation, redirect the user to the created course.
+    redirect($CFG->wwwroot . '/course/view.php?id=' . $collaborationcourse->id );
     die();
 }
 
@@ -135,22 +152,24 @@ if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
     die();
 }
 
+
+
 //Get form default/current values
 $fromformdata['coverage'] = optional_param('coverage', 'all', PARAM_TEXT);
 $fromformdata['licence'] = optional_param('licence', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['subject'] = optional_param('subject', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['audience'] = optional_param('audience', 'all', PARAM_ALPHANUMEXT);
-$fromformdata['language'] = optional_param('language', current_language(), PARAM_ALPHANUMEXT);
+$fromformdata['language'] = optional_param('language', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['educationallevel'] = optional_param('educationallevel', 'all', PARAM_ALPHANUMEXT);
 $fromformdata['downloadable'] = optional_param('downloadable', $usercandownload, PARAM_ALPHANUM);
 $fromformdata['orderby'] = optional_param('orderby', 'newest', PARAM_ALPHA);
-$fromformdata['huburl'] = optional_param('huburl', HUB_MOODLEORGHUBURL, PARAM_URL);
+$fromformdata['huburl'] = optional_param('huburl', $registeredhub->huburl /*HUB_MOODLEORGHUBURL*/, PARAM_URL);
 $fromformdata['search'] = $search;
 $fromformdata['courseid'] = $courseid;
-$hubselectorform = new block_customhub_search_form('', $fromformdata);
+$hubselectorform = new \block_customhub\form\block_customhub_search_form('', $fromformdata);
 $hubselectorform->set_data($fromformdata);
 
-//Retrieve courses by web service
+// Retrieve courses by web service
 $courses = null;
 if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
     $downloadable = optional_param('downloadable', false, PARAM_INT);
@@ -179,26 +198,33 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
 
     //the range of course requested
     $options->givememore = optional_param('givememore', 0, PARAM_INT);
-
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
-    $registrationmanager = new tool_customhub\registration_manager();
-    $registeredhubs = $registrationmanager->get_registered_on_hubs();
+
     foreach ($registeredhubs as $registeredhub) {
-        if ($huburl == $registeredhub->huburl) {
-            $token = $registeredhub->token;
-        }
+        $huburl = $registeredhub->huburl;
+        $token = $registeredhub->token;
+        // if ($huburl == $registeredhub->huburl) {
+        //     $token = $registeredhub->token;
+        // }
     }
 
     $function = 'hub_get_courses';
-    $params = array('search' => $search, 'downloadable' => $downloadable,
-        'enrollable' => intval(!$downloadable), 'options' => $options);
+    $params = [
+        'search' => $search,
+        'downloadable' => $downloadable,
+        'enrollable' => intval(!$downloadable),
+        'options' => $options
+    ];
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
+
+    
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
     try {
         $result = $xmlrpcclient->call($function, array_values($params));
         $courses = $result['courses'];
+        $SESSION->hubcourselist = $customhubhelper->set_courseregid_as_key($courses);
         $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {
         $errormessage = $OUTPUT->notification(

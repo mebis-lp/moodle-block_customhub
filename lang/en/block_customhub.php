@@ -26,8 +26,9 @@
 $string['activities'] = 'Activities';
 $string['add'] = 'Add';
 $string['addedtoblock'] = 'A link to this course has been added in your community finder block';
-$string['addtocommunityblock'] = 'Save a link to this course';
+$string['addtocommunityblock'] = 'Enrol to this course';
 $string['addcommunitycourse'] = 'Add community course';
+$string['customhub:addcommunity'] = 'Capability to add block hubsearch';
 $string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel} - License: {$a->license}';
 $string['addcourse'] = 'Search';
@@ -51,6 +52,7 @@ $string['dorestore'] = 'Yes';
 $string['download'] = 'Download';
 $string['downloadable'] = 'courses I can download';
 $string['downloadablecourses'] = 'Downloadable courses';
+$string['customhub:downloadcommunity'] = 'Capability to download courses';
 $string['downloadconfirmed'] = 'The backup has been saved in your private files {$a}';
 $string['downloaded'] = '...finished.';
 $string['downloadingcourse'] = 'Downloading course';
@@ -71,7 +73,7 @@ $string['hideall'] = 'Hide hubs';
 $string['hub'] = 'hub';
 $string['hubnottrusted'] = 'Not trusted';
 $string['hubtrusted'] = 'This hub is trusted by Moodle.org';
-$string['install'] = 'Install';
+$string['install'] = 'Copy course';
 $string['keywords'] = 'Keywords';
 $string['keywords_help'] = 'You can search for courses containing specific text in the name, description and other fields of the database.';
 $string['langdesc'] = 'Language: {$a} - ';
@@ -111,9 +113,28 @@ $string['showall'] = 'Show all hubs';
 $string['subject'] = 'Subject';
 $string['subject_help'] = 'To narrow your search to courses about a particular subject, choose one from this list.';
 $string['userinfo'] = 'Creator: {$a->creatorname} - Publisher: {$a->publishername}';
-$string['visitdemo'] = 'Visit demo';
+$string['visitdemo'] = 'Visit demo site';
 $string['visitsite'] = 'Visit site';
 $string['cannotsearchcommunity'] = 'Sorry, you don\'t have the right permissions to see this page';
 $string['xmlrpcdisabledcommunity'] = 'The XML-RPC extension is not enabled on the server. You can not search and download courses.';
 $string['nohubselected'] = 'No hub selected';
 $string['communityremoved'] = 'That course link has been removed from your list';
+$string['restorestarted'] = 'The course will be created in the background.';
+$string['noresults'] = 'No Results found';
+
+// Search Form.
+$string['advancedsearch'] = 'Advanced search';
+$string['search'] = 'search';
+$string['searchresults'] = 'Search results';
+$string['defaultsearch'] = 'Best rated';
+$string['search_placeholder'] = 'Search keyword / course / author / subject';
+
+// Search Results.
+$string['entercourse'] = 'Enter course';
+$string['coursecopy'] = 'Copy course';
+$string['report'] = 'report problem';
+$string['nothingfound'] = 'No courses found.';
+$string['loadmore'] = 'Load more results';
+
+$string['pleaseselect'] = 'Please select';
+$string['search_enrollable_courses'] = 'Search for enrollable courses';

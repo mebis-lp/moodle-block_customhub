@@ -26,12 +26,17 @@
  * @author     Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @deprecated
  */
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/customhub/constants.php');
 require_once($CFG->dirroot . '/blocks/customhub/hublisting.php');
 
+/**
+ * Form for community search
+ * @deprecated
+ */
 class block_customhub_search_form extends moodleform {
 
     const BLOCK_CUSTOMHUB_HUB_HUBDIRECTORYURL = 'https://hubdirectory.moodle.org';
@@ -80,10 +85,12 @@ class block_customhub_search_form extends moodleform {
         }
 
         foreach ($hubs as $key => $hub) {
-            if ($hub['url'] === HUB_OLDMOODLEORGHUBURL) {
-                // Hubdirectory returns old URL for the moodle.net hub, substitute it.
-                $hubs[$key]['url'] = HUB_MOODLEORGHUBURL;
-            }
+            // +++ MBS-Hack (Peter Mayer)
+            // if ($hub['url'] === HUB_OLDMOODLEORGHUBURL) {
+            //     // Hubdirectory returns old URL for the moodle.net hub, substitute it.
+            //     $hubs[$key]['url'] = HUB_MOODLEORGHUBURL;
+            // }
+            // --- MBS-Hack (Peter Mayer)
 
             // Retrieve hub logo + generate small logo.
             $params = array('hubid' => $hub['id'], 'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
@@ -167,7 +174,10 @@ class block_customhub_search_form extends moodleform {
         $mform->setType('executesearch', PARAM_INT);
 
         // Retrieve list of standard hubs (used to be requested from hubdirectory but now hardcoded).
-        $hubs = $this->get_standad_hubs_list();
+        // +++ MBS-Hack (Peter Mayer)
+        // $hubs = $this->get_standad_hubs_list();
+        $hubs = [];
+        // --- MBS-Hack (Peter Mayer)
 
         //display list of registered on hub
         $registrationmanager = new tool_customhub\registration_manager();
@@ -302,7 +312,9 @@ class block_customhub_search_form extends moodleform {
             $options = array();
             $options['all'] = get_string('any');
             foreach ($licences as $license) {
-                $options[$license->shortname] = get_string($license->shortname, 'license');
+                // +++ MBS-Hack (Peter Mayer)
+                $options[$license->shortname] = $license->shortname; //get_string($license->shortname, 'license');
+                // --- MBS-Hack (Peter Mayer)
             }
             $mform->addElement('select', 'licence', get_string('licence', 'block_customhub'), $options);
             unset($options);
